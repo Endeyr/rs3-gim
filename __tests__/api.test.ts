@@ -13,6 +13,7 @@ describe('API', () => {
 			body: mockPlayerResponseBody,
 		}
 
+		// player obj from await getPlayer()
 		const mockParsedPlayer = mockParsedPlayerData
 
 		// Mock axios response
