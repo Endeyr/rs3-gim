@@ -1,3 +1,4 @@
+import Layout from '@/components/layout/layout'
 import type { Metadata } from 'next'
 import localFont from 'next/font/local'
 import { ThemeProvider } from '../components/theme/theme-provider'
@@ -15,8 +16,8 @@ const geistMono = localFont({
 })
 
 export const metadata: Metadata = {
-	title: 'Next Template',
-	description: '',
+	title: 'RS3 GIM Dashboard',
+	description: 'A dashboard for the runescape game mode, group ironman.',
 }
 
 export default function RootLayout({
@@ -35,7 +36,7 @@ export default function RootLayout({
 					enableSystem
 					disableTransitionOnChange
 				>
-					{children}
+					<Layout>{children}</Layout>
 				</ThemeProvider>
 			</body>
 		</html>
