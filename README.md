@@ -1,6 +1,6 @@
-# Nextjs React Template
+# RS3 Group Ironman Website
 
-This template is a modern React setup following best practices for front-end development. 
+Website for the mmo runescape game mode group ironman. 
 
 ## Getting Started
 
