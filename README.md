@@ -1,6 +1,6 @@
 # RS3 Group Ironman Website
 
-Website for the mmo runescape game mode group ironman. 
+Website for the mmo runescape game mode group ironman. Project deployed on [Vercel](https://rs3-gim.vercel.app/).
 
 ## Getting Started
 
