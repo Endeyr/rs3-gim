@@ -38,4 +38,6 @@ next-env.d.ts
 
 # vscode
 symbols.json
+settings.json
+
 
