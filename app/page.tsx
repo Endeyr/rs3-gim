@@ -3,12 +3,28 @@
 import axios from 'axios'
 import { useState } from 'react'
 
+interface ActivityI {
+	rank: number
+	count: number
+}
+
+interface SkillI {
+	rank: number
+	level: number
+	experience: number
+}
+
+interface PlayerDataI {
+	activities: Record<string, ActivityI>
+	skills: Record<string, SkillI>
+}
+
 export default function Home() {
 	const [userInput, setUserInput] = useState('')
 	const [name, setName] = useState('')
 	const [isLoading, setIsLoading] = useState(false)
 	const [error, setError] = useState('')
-	// TODO State for player data
+	const [playerData, setPlayerData] = useState<PlayerDataI | null>(null)
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setUserInput(e.target.value)
@@ -25,8 +41,7 @@ export default function Home() {
 					`/api?username=${userInput}&gamemode=${gamemode}`
 				)
 				if (response.status === 200) {
-					console.log('Player data:', response.data)
-					// TODO display user data
+					setPlayerData(response.data)
 				} else {
 					throw new Error(`Failed to fetch data, status: ${response.status}`)
 				}
@@ -57,6 +72,28 @@ export default function Home() {
 			</form>
 			{error && <p style={{ color: 'red' }}>{error}</p>}
 			{/* TODO Table of Player Skills */}
+			{playerData && (
+				<table>
+					<thead>
+						<tr>
+							<th>Skill</th>
+							<th>Rank</th>
+							<th>Level</th>
+							<th>Experience</th>
+						</tr>
+					</thead>
+					<tbody>
+						{Object.entries(playerData.skills).map(([skill, data]) => (
+							<tr key={skill}>
+								<td>{skill}</td>
+								<td>{data.rank}</td>
+								<td>{data.level}</td>
+								<td>{data.experience}</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
+			)}
 		</div>
 	)
 }
