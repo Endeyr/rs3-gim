@@ -87,10 +87,6 @@ export const hiscores = {
 	] as const,
 }
 
-export const separateIntoLines = (jagexPlayer: string): string[] => {
-	return jagexPlayer.split('\n')
-}
-
 export const defaultSkillTree: PlayerSkills = {
 	overall: { rank: 0, level: 1, experience: 0 },
 	attack: { rank: 0, level: 1, experience: 0 },
@@ -261,6 +257,10 @@ export const formatRuneMetricsProfileSkills = (
 	return skills
 }
 
+export const separateIntoLines = (jagexPlayer: string): string[] => {
+	return jagexPlayer.split('\n')
+}
+
 export const parseJagexPlayerToJSON = (jagexPlayer: string): PlayerJSON => {
 	const lines = separateIntoLines(jagexPlayer)
 	const [skillsStartIndex, skillsEndIndex] = [0, hiscores.skills.length]
@@ -268,6 +268,13 @@ export const parseJagexPlayerToJSON = (jagexPlayer: string): PlayerJSON => {
 		hiscores.skills.length,
 		hiscores.skills.length + hiscores.activities.length,
 	]
+
+	console.log(
+		skillsStartIndex,
+		skillsEndIndex,
+		activitiesStartIndex,
+		activitiesEndIndex
+	)
 
 	const activities = formatActivities([
 		...lines.slice(activitiesStartIndex, activitiesEndIndex),
