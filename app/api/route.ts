@@ -5,18 +5,23 @@ export async function GET(req: NextRequest) {
 	const username = searchParams.get('username')
 	const gamemode = searchParams.get('gamemode')
 	try {
+		if (!username) {
+			return NextResponse.json(
+				{ error: 'Username is required' },
+				{ status: 400 }
+			)
+		}
 		const player = await getPlayer(
-			username as string,
+			username,
 			gamemode as 'normal' | 'ironman' | 'hardcore'
 		)
-		if (!player) {
-			return NextResponse.json({ error: 'Player not found' }, { status: 404 })
-		}
 		return NextResponse.json(player, { status: 200 })
 	} catch (error) {
-		console.error(error)
 		return NextResponse.json(
-			{ error: 'Failed to fetch player data' },
+			{
+				error:
+					error instanceof Error ? error.message : 'Unknown error occurred',
+			},
 			{ status: 500 }
 		)
 	}
