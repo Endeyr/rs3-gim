@@ -11,11 +11,11 @@ export const getPlayer = async (
 		if (!endpoint) {
 			throw new Error(`Invalid gamemode: ${gamemode}`)
 		}
-		const url = `${endpoint}?player=${name}`
+		const url = `${endpoint}?player=${encodeURIComponent(name)}`
 		const response = await axios.get(url)
 		const data = response.data
 		if (!data || typeof data !== 'string') {
-			throw new Error('API response data is invalid or undefined', data)
+			throw new Error('API response data is invalid or undefined')
 		}
 
 		const player = parseJagexPlayerToJSON(data)
