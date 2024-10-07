@@ -18,7 +18,10 @@ describe('getPlayer', () => {
 		const player = await getPlayer('testPlayer')
 
 		// Assertions
-		expect(player).toEqual(mockParsedPlayerData)
+		expect(player).toEqual({
+			...mockParsedPlayerData,
+			timestamp: expect.any(Date),
+		})
 		expect(mockedAxios.get).toHaveBeenCalledWith(
 			expect.stringContaining('testPlayer')
 		)

@@ -11,6 +11,7 @@ export type Player = string
 export type PlayerJSON = {
 	activities: PlayerActivities
 	skills: PlayerSkills
+	timestamp?: Date
 }
 
 export type PlayerActivities<K extends string = Activities> = {

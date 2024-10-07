@@ -8,7 +8,7 @@ describe('SearchBar', () => {
 	})
 
 	it('renders search bar', () => {
-		render(<XpTable playerData={mockParsedPlayerData} username="LightsOutIV" />)
+		render(<XpTable playerData={mockParsedPlayerData} username="testUser" />)
 
 		expect(screen.getByRole('table')).toBeInTheDocument()
 	})

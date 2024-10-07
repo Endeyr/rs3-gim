@@ -124,4 +124,5 @@ export const mockParsedPlayerData = {
 		archaeology: { rank: 115481, level: 106, experience: 28384779 },
 		necromancy: { rank: 94039, level: 104, experience: 22813758 },
 	},
+	timestamp: new Date(),
 }

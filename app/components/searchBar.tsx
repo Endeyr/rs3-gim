@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import SearchBarForm from './searchBarForm'
 import XpTable from './xpTable'
 
-// TODO test page and components, add timestamps to playerData, update based on timestamps, track old vs new xp gains
+// TODO add timestamps to playerData, update based on timestamps, track old vs new xp gains
 const SearchBar = () => {
 	const [playerData, setPlayerData] = useState<PlayerDataI | null>(null)
 	const [username, setUsername] = useState('')
@@ -21,6 +21,7 @@ const SearchBar = () => {
 		<>
 			{playerData ? (
 				<>
+					<p>{playerData.timestamp.toString()}</p>
 					<XpTable playerData={playerData} username={username} />
 				</>
 			) : (

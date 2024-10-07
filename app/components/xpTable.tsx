@@ -7,12 +7,7 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table'
-import { PlayerDataI } from '@/types/playerData'
-
-interface XPTablePropsI {
-	playerData: PlayerDataI
-	username: string
-}
+import type { XPTablePropsI } from '@/types/xpTable'
 
 const XpTable: React.FC<XPTablePropsI> = ({ playerData, username }) => {
 	const capitalizeFirstLetter = (str: string) => {
