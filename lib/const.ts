@@ -131,49 +131,28 @@ export const formatActivities = (activitiesArray?: string[]) => {
 		)
 	}
 
-	const activities: PlayerActivities = {
-		bounty_hunters: { rank: 0, count: 0 },
-		bh_rogues: { rank: 0, count: 0 },
-		dominion_tower: { rank: 0, count: 0 },
-		the_crucible: { rank: 0, count: 0 },
-		castle_wars_games: { rank: 0, count: 0 },
-		ba_attackers: { rank: 0, count: 0 },
-		ba_defenders: { rank: 0, count: 0 },
-		ba_collectors: { rank: 0, count: 0 },
-		ba_healers: { rank: 0, count: 0 },
-		duel_tournament: { rank: 0, count: 0 },
-		mobilising_armies: { rank: 0, count: 0 },
-		conquest: { rank: 0, count: 0 },
-		fist_of_guthix: { rank: 0, count: 0 },
-		gg_resource_race: { rank: 0, count: 0 },
-		gg_athletics: { rank: 0, count: 0 },
-		we2_armadyl_lifetime_contribution: { rank: 0, count: 0 },
-		we2_bandos_lifetime_contribution: { rank: 0, count: 0 },
-		we2_armadyl_pvp_kills: { rank: 0, count: 0 },
-		we2_bandos_pvp_kills: { rank: 0, count: 0 },
-		heist_guard_level: { rank: 0, count: 0 },
-		heist_robber_level: { rank: 0, count: 0 },
-		cfp_5_game_average: { rank: 0, count: 0 },
-		af15_cow_tipping: { rank: 0, count: 0 },
-		af15_rats_killed_after_the_miniquest: { rank: 0, count: 0 },
-		runescore: { rank: 0, count: 0 },
-		clue_scrolls_easy: { rank: 0, count: 0 },
-		clue_scrolls_medium: { rank: 0, count: 0 },
-		clue_scrolls_hard: { rank: 0, count: 0 },
-		clue_scrolls_elite: { rank: 0, count: 0 },
-		clue_scrolls_master: { rank: 0, count: 0 },
-	}
+	const activities: PlayerActivities = hiscores.activities.reduce(
+		(acc, activityName) => {
+			acc[activityName] = { rank: 0, count: 0 }
+			return acc
+		},
+		{} as PlayerActivities
+	)
 
 	hiscores.activities.forEach((activityName, index) => {
 		const activityData = activitiesArray[index]
 
 		// Check if activityData is defined before processing
 		if (activityData) {
-			const [rankStr, countStr] = activityData.split(',')
+			const splitData = activityData.split(',')
+			if (splitData.length !== 2) {
+				throw new Error(`Unexpected format in activity data: ${activityData}`)
+			}
+			const [rankStr, countStr] = splitData
 
 			// Parse the rank and count safely
-			const rank = rankStr ? parseInt(rankStr) : 0
-			const count = countStr ? parseInt(countStr) : 0
+			const rank = rankStr ? parseInt(rankStr, 10) : 0
+			const count = countStr ? parseInt(countStr, 10) : 0
 
 			// Update the activities object
 			activities[activityName] = {
@@ -181,7 +160,7 @@ export const formatActivities = (activitiesArray?: string[]) => {
 				count,
 			}
 		} else {
-			console.warn(
+			throw new Error(
 				`Activity data is missing for index ${index} (${activityName})`
 			)
 		}
@@ -205,13 +184,16 @@ export const formatSkills = (skillsArray?: string[]) => {
 
 		// Check if skillData is valid and split it
 		if (skillData) {
-			const [rankStr, levelStr, experienceStr] = skillData.split(',')
+			const splitData = skillData.split(',')
+			if (splitData.length !== 3) {
+				throw new Error(`Unexpected format in skill data: ${skillData}`)
+			}
+			const [rankStr, levelStr, experienceStr] = splitData
 
 			// Parse the rank, level, and experience safely
-			const rank = rankStr !== undefined ? parseInt(rankStr) : 0
-			const level = levelStr !== undefined ? parseInt(levelStr) : 0
-			const experience =
-				experienceStr !== undefined ? parseInt(experienceStr) : 0
+			const rank = rankStr ? parseInt(rankStr, 10) : 0
+			const level = levelStr ? parseInt(levelStr, 10) : 0
+			const experience = experienceStr ? parseInt(experienceStr, 10) : 0
 
 			// Ensure parsed values are valid numbers
 			if (!isNaN(rank) && !isNaN(level) && !isNaN(experience)) {
@@ -236,7 +218,7 @@ export const formatRuneMetricsProfileSkills = (
 ) => {
 	const skills = { ...defaultSkillTree }
 
-	hiscores.skills.map((skillName, index) => {
+	hiscores.skills.forEach((skillName, index) => {
 		const {
 			rank,
 			level,
@@ -258,23 +240,44 @@ export const formatRuneMetricsProfileSkills = (
 }
 
 export const separateIntoLines = (jagexPlayer: string): string[] => {
-	return jagexPlayer.split('\n')
+	return jagexPlayer.trim().split('\n')
 }
 
 export const parseJagexPlayerToJSON = (jagexPlayer: string): PlayerJSON => {
+	// Basic validation for input string
+	if (!jagexPlayer || typeof jagexPlayer !== 'string') {
+		throw new Error('Invalid input: jagexPlayer must be a non-empty string.')
+	}
+	// Split input into lines
 	const lines = separateIntoLines(jagexPlayer)
+	// Ensure the number of lines matches the expected count (skills + activities)
+	const expectedLines = hiscores.skills.length + hiscores.activities.length
+	if (lines.length !== expectedLines) {
+		throw new Error(
+			`Invalid input: Expected ${expectedLines} lines, got ${lines.length}.`
+		)
+	}
+	// Slice lines to separate skills and activities sections
 	const [skillsStartIndex, skillsEndIndex] = [0, hiscores.skills.length]
 	const [activitiesStartIndex, activitiesEndIndex] = [
 		hiscores.skills.length,
 		hiscores.skills.length + hiscores.activities.length,
 	]
+	// Validate and format skills
+	const activitiesArray = lines.slice(activitiesStartIndex, activitiesEndIndex)
+	let activities, skills
+	try {
+		activities = formatActivities(activitiesArray)
+	} catch (error) {
+		throw new Error(`Invalid activity data: ${error}`)
+	}
 
-	const activities = formatActivities([
-		...lines.slice(activitiesStartIndex, activitiesEndIndex),
-	])
-	const skills = formatSkills([
-		...lines.slice(skillsStartIndex, skillsEndIndex),
-	])
+	const skillsArray = lines.slice(skillsStartIndex, skillsEndIndex)
+	try {
+		skills = formatSkills(skillsArray)
+	} catch (error) {
+		throw new Error(`Invalid skill data: ${error}`)
+	}
 
 	return {
 		activities,
