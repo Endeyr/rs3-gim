@@ -1,29 +1,50 @@
+import {
+	Table,
+	TableBody,
+	TableCaption,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from '@/components/ui/table'
 import { PlayerDataI } from '@/types/playerData'
 
-const XpTable = ({ playerData }: { playerData: PlayerDataI }) => {
+interface XPTablePropsI {
+	playerData: PlayerDataI
+	username: string
+}
+
+const XpTable: React.FC<XPTablePropsI> = ({ playerData, username }) => {
+	const capitalizeFirstLetter = (str: string) => {
+		return str.charAt(0).toUpperCase() + str.slice(1)
+	}
+
 	return (
-		<>
-			<table>
-				<thead>
-					<tr>
-						<th>Skill</th>
-						<th>Rank</th>
-						<th>Level</th>
-						<th>Experience</th>
-					</tr>
-				</thead>
-				<tbody>
-					{Object.entries(playerData.skills).map(([skill, data]) => (
-						<tr key={skill}>
-							<td>{skill}</td>
-							<td>{data.rank}</td>
-							<td>{data.level}</td>
-							<td>{data.experience}</td>
-						</tr>
-					))}
-				</tbody>
-			</table>
-		</>
+		<Table>
+			<TableCaption>{username}</TableCaption>
+			<TableHeader>
+				<TableRow>
+					<TableHead>Skill</TableHead>
+					<TableHead className="text-right">Rank</TableHead>
+					<TableHead className="text-right">Level</TableHead>
+					<TableHead className="text-right">Experience</TableHead>
+				</TableRow>
+			</TableHeader>
+			<TableBody>
+				{Object.entries(playerData.skills).map(([skill, data]) => (
+					<TableRow key={skill}>
+						<TableCell>{capitalizeFirstLetter(skill)}</TableCell>
+						<TableCell className="text-right">
+							{data.rank.toLocaleString()}
+						</TableCell>
+						<TableCell className="text-right">{data.level}</TableCell>
+						<TableCell className="text-right">
+							{data.experience.toLocaleString()}
+						</TableCell>
+					</TableRow>
+				))}
+			</TableBody>
+		</Table>
 	)
 }
 export default XpTable
