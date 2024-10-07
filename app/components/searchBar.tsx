@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import SearchBarForm from './searchBarForm'
 import XpTable from './xpTable'
 
-// TODO add timestamps to playerData, update based on timestamps, track old vs new xp gains
+// TODO update based on timestamps, track old vs new xp gains, use getServerSideProps / getStaticProps for data fetching over axios, use SWR for data fetching / caching
 const SearchBar = () => {
 	const [playerData, setPlayerData] = useState<PlayerDataI | null>(null)
 	const [username, setUsername] = useState('')
@@ -21,7 +21,7 @@ const SearchBar = () => {
 		<>
 			{playerData ? (
 				<>
-					<p>{playerData.timestamp.toString()}</p>
+					<p>{new Date(playerData.timestamp).toLocaleString()}</p>
 					<XpTable playerData={playerData} username={username} />
 				</>
 			) : (
