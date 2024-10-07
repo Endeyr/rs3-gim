@@ -6,26 +6,21 @@ jest.mock('axios')
 
 const mockedAxios = axios as jest.Mocked<typeof axios>
 
-describe('API', () => {
-	it('getsPlayer by name', async () => {
-		// Mocked API response
-		const mockPlayerData = {
-			body: mockPlayerResponseBody,
-		}
-
-		// player obj from await getPlayer()
-		const mockParsedPlayer = mockParsedPlayerData
-
+describe('getPlayer', () => {
+	beforeEach(() => {
+		jest.clearAllMocks()
+	})
+	it('gets player by name successfully', async () => {
 		// Mock axios response
-		mockedAxios.get.mockResolvedValueOnce({ data: mockPlayerData })
+		mockedAxios.get.mockResolvedValueOnce({ data: mockPlayerResponseBody })
 
 		// Call the function
-		const player = await getPlayer('player1')
+		const player = await getPlayer('testPlayer')
 
 		// Assertions
-		expect(player).toEqual(mockParsedPlayer)
+		expect(player).toEqual(mockParsedPlayerData)
 		expect(mockedAxios.get).toHaveBeenCalledWith(
-			expect.stringContaining('player1')
+			expect.stringContaining('testPlayer')
 		)
 	})
 })
