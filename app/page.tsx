@@ -19,6 +19,7 @@ interface PlayerDataI {
 	skills: Record<string, SkillI>
 }
 
+// TODO refactor, save playerData / name to localStorage, check localStorage for playerData / name, test page and components
 export default function Home() {
 	const [userInput, setUserInput] = useState('')
 	const [name, setName] = useState('')
@@ -58,6 +59,7 @@ export default function Home() {
 	return (
 		<div>
 			<h1>Home</h1>
+			{/* Search Player's Name */}
 			{name && <h2>Name: {name}</h2>}
 			<form onSubmit={searchName}>
 				<input
@@ -71,7 +73,7 @@ export default function Home() {
 				</button>
 			</form>
 			{error && <p style={{ color: 'red' }}>{error}</p>}
-			{/* TODO Table of Player Skills */}
+			{/* Table of Player's Skills */}
 			{playerData && (
 				<table>
 					<thead>
