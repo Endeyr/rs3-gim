@@ -21,7 +21,7 @@ const SearchBar = () => {
 		<>
 			{playerData ? (
 				<>
-					<p>{new Date(playerData.timestamp).toLocaleString()}</p>
+					{/* <p>{new Date(playerData.timestamp).toLocaleString()}</p> */}
 					<XpTable playerData={playerData} username={username} />
 				</>
 			) : (
