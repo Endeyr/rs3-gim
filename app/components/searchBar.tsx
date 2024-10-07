@@ -5,32 +5,39 @@ import { useEffect, useState } from 'react'
 import SearchBarForm from './searchBarForm'
 import XpTable from './xpTable'
 
-// TODO update based on timestamps, track old vs new xp gains, use getServerSideProps / getStaticProps for data fetching over axios, use SWR for data fetching / caching
+// TODO update based on timestamps, track old vs new xp gains
 const SearchBar = () => {
 	const [playerData, setPlayerData] = useState<PlayerDataI | null>(null)
 	const [username, setUsername] = useState('')
 
 	useEffect(() => {
 		const savedPlayerData = localStorage.getItem('playerData')
+		const savedUsername = localStorage.getItem('username')
 		if (savedPlayerData) {
-			setPlayerData(JSON.parse(savedPlayerData) as PlayerDataI)
+			try {
+				setPlayerData(JSON.parse(savedPlayerData) as PlayerDataI)
+			} catch (error) {
+				setPlayerData(null)
+				throw new Error(
+					`Failed to parse player data from localStorage: ${error}`
+				)
+			}
+		}
+		if (savedUsername) {
+			setUsername(savedUsername)
 		}
 	}, [])
 
 	return (
 		<>
 			{playerData ? (
-				<>
-					{/* <p>{new Date(playerData.timestamp).toLocaleString()}</p> */}
-					<XpTable playerData={playerData} username={username} />
-				</>
+				// <p>{new Date(playerData.timestamp).toLocaleString()}</p>
+				<XpTable playerData={playerData} username={username} />
 			) : (
-				<>
-					<SearchBarForm
-						setPlayerData={setPlayerData}
-						setUsername={setUsername}
-					/>
-				</>
+				<SearchBarForm
+					setPlayerData={setPlayerData}
+					setUsername={setUsername}
+				/>
 			)}
 		</>
 	)
