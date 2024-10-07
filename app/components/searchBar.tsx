@@ -8,6 +8,7 @@ import XpTable from './xpTable'
 // TODO refactor, test page and components
 const SearchBar = () => {
 	const [playerData, setPlayerData] = useState<PlayerDataI | null>(null)
+	const [username, setUsername] = useState('')
 
 	useEffect(() => {
 		const savedPlayerData = localStorage.getItem('playerData')
@@ -51,11 +52,14 @@ const SearchBar = () => {
 		<>
 			{playerData ? (
 				<>
-					<XpTable playerData={playerData} />
+					<XpTable playerData={playerData} username={username} />
 				</>
 			) : (
 				<>
-					<SearchBarForm setPlayerData={setPlayerData} />
+					<SearchBarForm
+						setPlayerData={setPlayerData}
+						setUsername={setUsername}
+					/>
 				</>
 			)}
 		</>

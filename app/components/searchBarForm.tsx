@@ -33,9 +33,13 @@ const formSchema = z.object({
 
 interface SearchBarFormProps {
 	setPlayerData: React.Dispatch<SetStateAction<PlayerDataI | null>>
+	setUsername: React.Dispatch<SetStateAction<string>>
 }
 
-const SearchBarForm: React.FC<SearchBarFormProps> = ({ setPlayerData }) => {
+const SearchBarForm: React.FC<SearchBarFormProps> = ({
+	setPlayerData,
+	setUsername,
+}) => {
 	const [isLoading, setIsLoading] = useState(false)
 	const [error, setError] = useState('')
 
@@ -51,6 +55,7 @@ const SearchBarForm: React.FC<SearchBarFormProps> = ({ setPlayerData }) => {
 		setIsLoading(true)
 		setError('')
 		try {
+			setUsername(values.name)
 			const response = await axios(
 				`/api?username=${values.name}&gamemode=${values.gamemode}`
 			)
