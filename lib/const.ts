@@ -269,13 +269,6 @@ export const parseJagexPlayerToJSON = (jagexPlayer: string): PlayerJSON => {
 		hiscores.skills.length + hiscores.activities.length,
 	]
 
-	console.log(
-		skillsStartIndex,
-		skillsEndIndex,
-		activitiesStartIndex,
-		activitiesEndIndex
-	)
-
 	const activities = formatActivities([
 		...lines.slice(activitiesStartIndex, activitiesEndIndex),
 	])
