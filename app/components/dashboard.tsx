@@ -1,4 +1,13 @@
+import SearchBar from './searchBar'
+import XpTable from './xpTable'
+
 const Dashboard = () => {
-	return <div>Dashboard</div>
+	return (
+		<>
+			<SearchBar />
+			<XpTable />
+		</>
+	)
 }
+
 export default Dashboard

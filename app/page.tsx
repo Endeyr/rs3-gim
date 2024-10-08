@@ -1,9 +1,9 @@
-import SearchBar from './components/searchBar'
+import Dashboard from './components/dashboard'
 
 export default function Home() {
 	return (
 		<>
-			<SearchBar />
+			<Dashboard />
 		</>
 	)
 }

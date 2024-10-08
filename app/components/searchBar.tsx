@@ -1,43 +1,36 @@
 'use client'
 
+import { PlayerContextI } from '@/types/context'
 import { PlayerDataI } from '@/types/playerData'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect } from 'react'
+import { PlayerContext } from '../context/playerContext'
 import SearchBarForm from './searchBarForm'
-import XpTable from './xpTable'
 
-// TODO update based on timestamps, track old vs new xp gains, manage global state
+// TODO update based on timestamps, track old vs new xp gains
 const SearchBar = () => {
-	const [playerData, setPlayerData] = useState<PlayerDataI | null>(null)
-	const [username, setUsername] = useState('')
+	const { updatePlayerData, updateUsername } = useContext(
+		PlayerContext
+	) as PlayerContextI
 
 	useEffect(() => {
 		const savedPlayerData = localStorage.getItem('playerData')
 		const savedUsername = localStorage.getItem('username')
 		if (savedPlayerData) {
 			try {
-				setPlayerData(JSON.parse(savedPlayerData) as PlayerDataI)
+				updatePlayerData(JSON.parse(savedPlayerData) as PlayerDataI)
 			} catch (error) {
-				setPlayerData(null)
-				throw new Error(
-					`Failed to parse player data from localStorage: ${error}`
-				)
+				console.error(`Failed to parse player data from localStorage: ${error}`)
+				updatePlayerData(null)
 			}
 		}
 		if (savedUsername) {
-			setUsername(savedUsername)
+			updateUsername(savedUsername)
 		}
-	}, [])
+	}, [updatePlayerData, updateUsername])
 
 	return (
 		<>
-			{playerData ? (
-				<XpTable playerData={playerData} username={username} />
-			) : (
-				<SearchBarForm
-					setPlayerData={setPlayerData}
-					setUsername={setUsername}
-				/>
-			)}
+			<SearchBarForm />
 		</>
 	)
 }

@@ -1,3 +1,5 @@
+'use client'
+
 import {
 	Table,
 	TableBody,
@@ -7,22 +9,33 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table'
-import type { XPTablePropsI } from '@/types/xpTable'
+import { capitalizeFirstLetter } from '@/lib/utils'
+import { PlayerContextI } from '@/types/context'
+import { useContext } from 'react'
+import { PlayerContext } from '../context/playerContext'
 
-const XpTable: React.FC<XPTablePropsI> = ({ playerData, username }) => {
-	const capitalizeFirstLetter = (str: string) => {
-		return str.charAt(0).toUpperCase() + str.slice(1)
+const XpTable: React.FC = () => {
+	const { username, playerData } = useContext(PlayerContext) as PlayerContextI
+
+	if (!playerData) {
+		return null
 	}
 
 	return (
 		<Table>
-			<TableCaption>{username}</TableCaption>
+			<TableCaption>{username && username}</TableCaption>
 			<TableHeader>
 				<TableRow>
-					<TableHead>Skill</TableHead>
-					<TableHead className="text-right">Rank</TableHead>
-					<TableHead className="text-right">Level</TableHead>
-					<TableHead className="text-right">Experience</TableHead>
+					<TableHead scope="col">Skill</TableHead>
+					<TableHead scope="col" className="text-right">
+						Rank
+					</TableHead>
+					<TableHead scope="col" className="text-right">
+						Level
+					</TableHead>
+					<TableHead scope="col" className="text-right">
+						Experience
+					</TableHead>
 				</TableRow>
 			</TableHeader>
 			<TableBody>
@@ -30,11 +43,11 @@ const XpTable: React.FC<XPTablePropsI> = ({ playerData, username }) => {
 					<TableRow key={skill}>
 						<TableCell>{capitalizeFirstLetter(skill)}</TableCell>
 						<TableCell className="text-right">
-							{data.rank.toLocaleString()}
+							{(data.rank || 0).toLocaleString()}
 						</TableCell>
-						<TableCell className="text-right">{data.level}</TableCell>
+						<TableCell className="text-right">{data.level || 0}</TableCell>
 						<TableCell className="text-right">
-							{data.experience.toLocaleString()}
+							{(data.experience || 0).toLocaleString()}
 						</TableCell>
 					</TableRow>
 				))}
