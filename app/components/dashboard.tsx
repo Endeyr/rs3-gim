@@ -5,7 +5,9 @@ const Dashboard = () => {
 	return (
 		<>
 			<SearchBar />
-			<XpTable />
+			<div className="w-[30dvw]">
+				<XpTable />
+			</div>
 		</>
 	)
 }

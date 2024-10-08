@@ -1,6 +1,9 @@
 import { getPlayer } from '@/lib/api'
 import axios from 'axios'
-import { mockParsedPlayerData, mockPlayerResponseBody } from '../lib/testData'
+import {
+	mockParsedPlayerData,
+	mockPlayerResponseBody,
+} from '../__mocks__/mockTestData'
 
 jest.mock('axios')
 

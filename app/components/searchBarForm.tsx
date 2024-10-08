@@ -30,9 +30,9 @@ const formSchema = z.object({
 		.trim()
 		.min(1, { message: 'Username must be at least 1 character.' })
 		.max(12, { message: 'Username cannot exceed 12 characters' })
-		.regex(/^[a-zA-Z0-9](?!.*__)[a-zA-Z0-9_]*[a-zA-Z0-9]$/, {
+		.regex(/^(?!.*__)(?!.* _)(?! _)[a-zA-Z0-9][a-zA-Z0-9_ ]*[a-zA-Z0-9]$/, {
 			message:
-				'Username can only contain letters, numbers, and underscores, and cannot start or end with an underscore.',
+				'Username can only contain letters, numbers, spaces, and underscores, and cannot start or end with an underscore or space.',
 		}),
 	gamemode: z.enum(hiscores.gamemodes),
 })
@@ -70,9 +70,9 @@ const SearchBarForm: React.FC = () => {
 		} catch (error) {
 			if (axios.isAxiosError(error)) {
 				updateError(
-					error.response?.status === 404
+					error.response?.status === 500
 						? 'Player not found.'
-						: 'An error occurred.'
+						: 'An error occurred, please try again later.'
 				)
 			} else {
 				updateError(`An unexpected error occurred; ${error}`)
