@@ -16,25 +16,24 @@ import {
 	SelectValue,
 } from '@/components/ui/select'
 import { hiscores } from '@/lib/const'
-import { PlayerDataI } from '@/types/playerData'
+import { SearchBarFormProps } from '@/types/searchBarForm'
 import { zodResolver } from '@hookform/resolvers/zod'
 import axios from 'axios'
-import { SetStateAction, useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 const formSchema = z.object({
 	name: z
 		.string()
+		.trim()
 		.min(1, { message: 'Username must be at least 1 character.' })
-		.max(12, { message: 'Username cannot exceed 12 characters' }),
+		.max(12, { message: 'Username cannot exceed 12 characters' })
+		.regex(/^[a-zA-Z0-9_]+$/, {
+			message: 'Username can only contain letters, numbers, and underscores.',
+		}),
 	gamemode: z.enum(hiscores.gamemodes),
 })
-
-interface SearchBarFormProps {
-	setPlayerData: React.Dispatch<SetStateAction<PlayerDataI | null>>
-	setUsername: React.Dispatch<SetStateAction<string>>
-}
 
 const SearchBarForm: React.FC<SearchBarFormProps> = ({
 	setPlayerData,
@@ -53,21 +52,28 @@ const SearchBarForm: React.FC<SearchBarFormProps> = ({
 
 	const onSubmit = async (values: z.infer<typeof formSchema>) => {
 		setIsLoading(true)
-		setError('')
 		try {
+			setError('')
 			setUsername(values.name)
+			localStorage.setItem('username', values.name)
 			const response = await axios(
-				`/api?username=${values.name}&gamemode=${values.gamemode}`
+				`/api?username=${encodeURIComponent(values.name)}&gamemode=${
+					values.gamemode
+				}`,
+				{ timeout: 10000 }
 			)
-			if (response.status === 200) {
-				setPlayerData(response.data)
-				localStorage.setItem('playerData', JSON.stringify(response.data))
-			} else {
-				throw new Error(`Failed to fetch data, status: ${response.status}`)
-			}
+			setPlayerData(response.data)
+			localStorage.setItem('playerData', JSON.stringify(response.data))
 		} catch (error) {
-			setError('Player not found.')
-			console.warn(error)
+			if (axios.isAxiosError(error)) {
+				setError(
+					error.response?.status === 404
+						? 'Player not found.'
+						: 'An error occurred.'
+				)
+			} else {
+				setError(`An unexpected error occurred; ${error}`)
+			}
 		} finally {
 			setIsLoading(false)
 		}
@@ -83,27 +89,46 @@ const SearchBarForm: React.FC<SearchBarFormProps> = ({
 						<FormItem>
 							<FormLabel>Username</FormLabel>
 							<FormControl>
-								<Input placeholder="Runescape Username" {...field} />
+								<Input
+									placeholder="Runescape Username"
+									{...field}
+									disabled={isLoading}
+								/>
 							</FormControl>
 							<FormMessage />
 						</FormItem>
 					)}
 				/>
-				<Select>
-					<SelectTrigger className="w-[180px]">
-						<SelectValue placeholder="Gamemode" />
-					</SelectTrigger>
-					<SelectContent>
-						<SelectItem value="normal">Normal</SelectItem>
-						<SelectItem value="ironman">Ironman</SelectItem>
-						<SelectItem value="hardcore">Hardcore Ironman</SelectItem>
-					</SelectContent>
-				</Select>
+				<FormField
+					control={form.control}
+					name="gamemode"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Gamemode</FormLabel>
+							<Select onValueChange={field.onChange} defaultValue={field.value}>
+								<SelectTrigger className="w-[180px]">
+									<SelectValue placeholder="Gamemode" />
+								</SelectTrigger>
+								<SelectContent>
+									{hiscores.gamemodes.map((mode) => (
+										<SelectItem key={mode} value={mode}>
+											{mode.charAt(0).toUpperCase() + mode.slice(1)}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+						</FormItem>
+					)}
+				/>
 				<Button type="submit" disabled={isLoading}>
 					{!isLoading ? 'Search' : 'Loading...'}
 				</Button>
 			</form>
-			{error && <p className="text-red-500 mt-2">{error}</p>}
+			{error && (
+				<p className="text-red-500 mt-2" aria-live="polite">
+					{error}
+				</p>
+			)}
 		</Form>
 	)
 }
