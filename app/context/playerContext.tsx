@@ -5,12 +5,11 @@ import { PlayerDataI } from '@/types/playerData'
 import { createContext, useCallback, useState } from 'react'
 
 const defaultPlayerContext: PlayerContextI = {
-	playerData: null,
-	username: '',
+	playerDataArray: [],
 	isLoading: false,
 	error: '',
+	updatePlayerDataArray: () => {},
 	updatePlayerData: () => {},
-	updateUsername: () => {},
 	updateIsLoading: () => {},
 	updateError: () => {},
 }
@@ -20,31 +19,60 @@ export const PlayerContext = createContext<PlayerContextI>(defaultPlayerContext)
 export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
 	children,
 }) => {
-	const [playerData, setPlayerData] = useState<PlayerDataI | null>(null)
-	const [username, setUsername] = useState('')
+	const [playerDataArray, setPlayerDataArray] = useState<PlayerDataI[]>([])
 	const [isLoading, setIsLoading] = useState(false)
 	const [error, setError] = useState('')
 
-	const updatePlayerData = useCallback((newPlayerData: PlayerDataI | null) => {
-		setPlayerData(newPlayerData)
-		try {
-			if (newPlayerData) {
-				localStorage.setItem('playerData', JSON.stringify(newPlayerData))
-			} else {
-				localStorage.removeItem('playerData')
-			}
-		} catch (error) {
-			console.error(`Failed to update localStorage: ${error}`)
-		}
-	}, [])
+	const updatePlayerDataArray = useCallback(
+		(newPlayerDataArray: PlayerDataI[]) => {
+			setPlayerDataArray((prevData) => {
+				const combinedData = [
+					...prevData,
+					...newPlayerDataArray.filter(
+						(newPlayer) =>
+							!prevData.some(
+								(prevPlayer) => prevPlayer.username === newPlayer.username
+							)
+					),
+				]
 
-	const updateUsername = useCallback((newUsername: string) => {
-		setUsername(newUsername)
-		try {
-			localStorage.setItem('username', newUsername)
-		} catch (error) {
-			console.error(`Failed to update localStorage: ${error}`)
-		}
+				try {
+					localStorage.setItem('playerDataArray', JSON.stringify(combinedData))
+				} catch (error) {
+					console.error(`Failed to update localStorage: ${error}`)
+				}
+
+				return combinedData
+			})
+		},
+		[]
+	)
+
+	const updatePlayerData = useCallback((newPlayerData: PlayerDataI) => {
+		setPlayerDataArray((prevData) => {
+			const existingPlayerIndex = prevData.findIndex(
+				(player) => player.username === newPlayerData.username
+			)
+
+			let updatedData
+			if (existingPlayerIndex !== -1) {
+				updatedData = [
+					...prevData.slice(0, existingPlayerIndex),
+					newPlayerData,
+					...prevData.slice(existingPlayerIndex + 1),
+				]
+			} else {
+				updatedData = [...prevData, newPlayerData]
+			}
+
+			try {
+				localStorage.setItem(`playerDataArray`, JSON.stringify(updatedData))
+			} catch (error) {
+				console.error(`Failed to update localStorage: ${error}`)
+			}
+
+			return updatedData
+		})
 	}, [])
 
 	const updateIsLoading = useCallback((newIsLoading: boolean) => {
@@ -57,10 +85,9 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
 	return (
 		<PlayerContext.Provider
 			value={{
-				playerData,
+				playerDataArray,
+				updatePlayerDataArray,
 				updatePlayerData,
-				username,
-				updateUsername,
 				isLoading,
 				updateIsLoading,
 				error,

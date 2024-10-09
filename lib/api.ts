@@ -21,6 +21,7 @@ export const getPlayer = async (
 		const player = parseJagexPlayerToJSON(data)
 		if (!player) throw new Error('getPlayer error: player data is invalid')
 		player.timestamp = new Date()
+		player.username = name
 		return player
 	} catch (error: unknown) {
 		if (axios.isAxiosError(error)) {

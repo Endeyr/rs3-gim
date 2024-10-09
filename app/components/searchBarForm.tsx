@@ -1,3 +1,5 @@
+'use client'
+
 import { Button } from '@/components/ui/button'
 import {
 	Form,
@@ -15,7 +17,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select'
-import { hiscores } from '@/lib/const'
+import { hiscores, MAX_AGE } from '@/lib/const'
 import { PlayerContextI } from '@/types/context'
 import { zodResolver } from '@hookform/resolvers/zod'
 import axios from 'axios'
@@ -39,8 +41,8 @@ const formSchema = z.object({
 
 const SearchBarForm: React.FC = () => {
 	const {
+		playerDataArray,
 		updatePlayerData,
-		updateUsername,
 		updateIsLoading,
 		updateError,
 		isLoading,
@@ -57,29 +59,46 @@ const SearchBarForm: React.FC = () => {
 
 	const onSubmit = async (values: z.infer<typeof formSchema>) => {
 		updateIsLoading(true)
-		try {
-			updateError('')
-			updateUsername(values.name.trim())
-			const response = await axios(
-				`/api?username=${encodeURIComponent(values.name)}&gamemode=${
-					values.gamemode
-				}`,
-				{ timeout: 10000 }
-			)
-			updatePlayerData(response.data)
-		} catch (error) {
-			if (axios.isAxiosError(error)) {
-				updateError(
-					error.response?.status === 500
-						? 'Player not found.'
-						: 'An error occurred, please try again later.'
+		const existingPlayerIndex = playerDataArray.findIndex(
+			(player) => player.username === values.name
+		)
+
+		let playerOutOfDate
+		if (playerDataArray[existingPlayerIndex]) {
+			playerOutOfDate =
+				existingPlayerIndex !== -1 &&
+				Date.now() -
+					new Date(playerDataArray[existingPlayerIndex].timestamp).getTime() >
+					MAX_AGE
+		}
+
+		if (existingPlayerIndex === -1 || playerOutOfDate) {
+			try {
+				updateError('')
+				const response = await axios(
+					`/api?username=${encodeURIComponent(values.name)}&gamemode=${
+						values.gamemode
+					}`,
+					{ timeout: 10000 }
 				)
-			} else {
-				updateError(`An unexpected error occurred; ${error}`)
-				console.error(`Unexpected error: ${error}`)
+				updatePlayerData(response.data)
+			} catch (error) {
+				if (axios.isAxiosError(error)) {
+					updateError(
+						error.response?.status === 500
+							? 'Player not found.'
+							: 'An error occurred, please try again later.'
+					)
+				} else {
+					updateError(`An unexpected error occurred; ${error}`)
+					console.error(`Unexpected error: ${error}`)
+				}
+			} finally {
+				updateIsLoading(false)
 			}
-		} finally {
+		} else {
 			updateIsLoading(false)
+			updateError('Player data is up to date.')
 		}
 	}
 

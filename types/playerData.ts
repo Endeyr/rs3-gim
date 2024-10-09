@@ -13,4 +13,5 @@ export interface PlayerDataI {
 	activities: Record<string, ActivityI>
 	skills: Record<string, SkillI>
 	timestamp: Date
+	username: string
 }

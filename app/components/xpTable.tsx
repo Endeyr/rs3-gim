@@ -10,20 +10,20 @@ import {
 	TableRow,
 } from '@/components/ui/table'
 import { capitalizeFirstLetter } from '@/lib/utils'
-import { PlayerContextI } from '@/types/context'
-import { useContext } from 'react'
-import { PlayerContext } from '../context/playerContext'
+import { PlayerDataI } from '@/types/playerData'
 
-const XpTable: React.FC = () => {
-	const { username, playerData } = useContext(PlayerContext) as PlayerContextI
+export interface XpTableI {
+	playerData: PlayerDataI
+}
 
+const XpTable: React.FC<XpTableI> = ({ playerData }) => {
 	if (!playerData) {
 		return null
 	}
 
 	return (
 		<Table>
-			<TableCaption>{username && username}</TableCaption>
+			<TableCaption>{playerData.username}</TableCaption>
 			<TableHeader>
 				<TableRow>
 					<TableHead scope="col">Skill</TableHead>

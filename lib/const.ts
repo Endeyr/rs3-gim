@@ -5,6 +5,8 @@ import type {
 	ProfileSkills,
 } from '@/types/api'
 
+export const MAX_AGE = 60 * 60 * 1000 // 1 hour
+
 export const runemetrics = {
 	endpoints: {
 		profile: `https://apps.runescape.com/runemetrics/profile/profile`,
