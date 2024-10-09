@@ -25,6 +25,7 @@ const XpTable: React.FC<XpTableI> = ({ playerData }) => {
 		<>
 			<h1 className="text-center w-full">{playerData.username}</h1>
 			{/* TODO Add remove from table button */}
+			{/* TODO Add go to profile button - display chart + historic xp gains */}
 			<Table className="xl:text-[12px] lg:text-[16px] px-2">
 				<TableCaption>
 					Last Updated: {new Date(playerData.timestamp).toLocaleString()}
