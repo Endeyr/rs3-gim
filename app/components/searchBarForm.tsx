@@ -103,14 +103,14 @@ const SearchBarForm: React.FC = () => {
 	}
 
 	return (
-		<div className="w-[25dvw]">
+		<div className="w-full mx-auto px-2">
 			<Form {...form}>
 				<form
 					onSubmit={form.handleSubmit(onSubmit)}
-					className="space-y-4"
+					className="space-y-4 w-full flex flex-col justify-evenly items-center"
 					aria-busy={isLoading}
 				>
-					<fieldset disabled={isLoading} className="space-y-4">
+					<fieldset disabled={isLoading} className="space-y-4 w-full">
 						<FormField
 							control={form.control}
 							name="name"
@@ -156,9 +156,11 @@ const SearchBarForm: React.FC = () => {
 							)}
 						/>
 					</fieldset>
-					<Button type="submit" disabled={isLoading}>
-						{!isLoading ? 'Search' : 'Loading...'}
-					</Button>
+					<div className="w-full">
+						<Button type="submit" disabled={isLoading}>
+							{!isLoading ? 'Search' : 'Loading...'}
+						</Button>
+					</div>
 				</form>
 			</Form>
 			{error && (
