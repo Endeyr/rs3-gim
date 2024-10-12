@@ -10,6 +10,7 @@ const defaultPlayerContext: PlayerContextI = {
 	error: '',
 	updatePlayerDataArray: () => {},
 	updatePlayerData: () => {},
+	removePlayerData: () => {},
 	updateIsLoading: () => {},
 	updateError: () => {},
 }
@@ -54,7 +55,7 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
 				(player) => player.username === newPlayerData.username
 			)
 
-			let updatedData
+			let updatedData: PlayerDataI[]
 			if (existingPlayerIndex !== -1) {
 				updatedData = [
 					...prevData.slice(0, existingPlayerIndex),
@@ -64,6 +65,22 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
 			} else {
 				updatedData = [...prevData, newPlayerData]
 			}
+
+			try {
+				localStorage.setItem(`playerDataArray`, JSON.stringify(updatedData))
+			} catch (error) {
+				console.error(`Failed to update localStorage: ${error}`)
+			}
+
+			return updatedData
+		})
+	}, [])
+
+	const removePlayerData = useCallback((username: string) => {
+		setPlayerDataArray((prevData) => {
+			const updatedData = prevData.filter(
+				(player) => player.username !== username
+			)
 
 			try {
 				localStorage.setItem(`playerDataArray`, JSON.stringify(updatedData))
@@ -88,6 +105,7 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
 				playerDataArray,
 				updatePlayerDataArray,
 				updatePlayerData,
+				removePlayerData,
 				isLoading,
 				updateIsLoading,
 				error,
