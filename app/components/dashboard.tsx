@@ -28,20 +28,20 @@ const Dashboard = () => {
 
 	return (
 		<div className="space-y-8">
-			<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+			<ul className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
 				{playerDataArray.length === 0 ? (
-					<p>No players found. Please add some players.</p>
+					<li>No players found. Please add some players.</li>
 				) : (
 					playerDataArray.map((playerData) => (
-						<div key={playerData.username} className="w-full">
+						<li key={playerData.username} className="w-full">
 							<XpTable playerData={playerData} />
-						</div>
+						</li>
 					))
 				)}
 				<div className="col-span-1 flex flex-col w-full gap-2 justify-center items-center">
 					<SearchBar />
 				</div>
-			</div>
+			</ul>
 		</div>
 	)
 }
