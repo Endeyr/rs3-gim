@@ -26,9 +26,20 @@ const Dashboard = () => {
 		}
 	}, [updatePlayerDataArray])
 
+	const dynamicClasses =
+		playerDataArray.length >= 5
+			? 'md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5'
+			: playerDataArray.length === 3
+			? 'md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+			: playerDataArray.length === 2
+			? 'md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3'
+			: playerDataArray.length === 1
+			? 'md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2'
+			: 'md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1'
+
 	return (
 		<div className="space-y-8">
-			<ul className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+			<ul className={`grid grid-cols-1 gap-4 ${dynamicClasses}`}>
 				{playerDataArray.length === 0 ? (
 					<li>No players found. Please add some players.</li>
 				) : (
