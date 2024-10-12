@@ -2,11 +2,11 @@
 
 import { PlayerContextI } from '@/types/context'
 import { PlayerDataI } from '@/types/playerData'
-import { createContext, useCallback, useState } from 'react'
+import { createContext, useCallback, useEffect, useState } from 'react'
 
 const defaultPlayerContext: PlayerContextI = {
 	playerDataArray: [],
-	isLoading: false,
+	isLoading: true,
 	error: '',
 	updatePlayerDataArray: () => {},
 	updatePlayerData: () => {},
@@ -21,8 +21,20 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
 	children,
 }) => {
 	const [playerDataArray, setPlayerDataArray] = useState<PlayerDataI[]>([])
-	const [isLoading, setIsLoading] = useState(false)
+	const [isLoading, setIsLoading] = useState(true)
 	const [error, setError] = useState('')
+
+	useEffect(() => {
+		const savedPlayerDataArray = localStorage.getItem('playerDataArray')
+		if (savedPlayerDataArray) {
+			try {
+				setPlayerDataArray(JSON.parse(savedPlayerDataArray))
+			} catch (error) {
+				console.error('Failed to parse player data from localStorage:', error)
+			}
+		}
+		setIsLoading(false)
+	}, [])
 
 	const updatePlayerDataArray = useCallback(
 		(newPlayerDataArray: PlayerDataI[]) => {
