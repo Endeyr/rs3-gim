@@ -38,7 +38,7 @@ const Dashboard = () => {
 						</li>
 					))
 				)}
-				<div className="col-span-1 flex flex-col w-full gap-2 justify-center items-center">
+				<div className="col-span-1 flex flex-col w-full gap-2 justify-start items-center">
 					<SearchBar />
 				</div>
 			</ul>
