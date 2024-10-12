@@ -57,6 +57,7 @@ const SearchBarForm: React.FC = () => {
 		},
 	})
 
+	// TODO: add success message, clear username after search
 	const onSubmit = async (values: z.infer<typeof formSchema>) => {
 		updateIsLoading(true)
 		const existingPlayerIndex = playerDataArray.findIndex(
