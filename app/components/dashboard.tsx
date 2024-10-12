@@ -7,8 +7,6 @@ import { PlayerContext } from '../context/playerContext'
 import SearchBar from './searchBar'
 import XpTable from './xpTable'
 
-// TODO update based on timestamps, track old vs new xp gains, add chart js, add draggable
-
 const Dashboard = () => {
 	const { playerDataArray, updatePlayerDataArray } = useContext(
 		PlayerContext
