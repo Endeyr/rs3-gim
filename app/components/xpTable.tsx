@@ -15,6 +15,7 @@ import { PlayerContextI } from '@/types/context'
 import { PlayerDataI } from '@/types/playerData'
 import { Trash2 } from 'lucide-react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useContext } from 'react'
 import { PlayerContext } from '../context/playerContext'
 
@@ -24,6 +25,7 @@ export interface XpTableI {
 
 const XpTable: React.FC<XpTableI> = ({ playerData }) => {
 	const { removePlayerData } = useContext(PlayerContext) as PlayerContextI
+	const pathname = usePathname()
 
 	if (!playerData) {
 		return null
@@ -32,21 +34,25 @@ const XpTable: React.FC<XpTableI> = ({ playerData }) => {
 	return (
 		<>
 			<div className="flex justify-between items-center">
-				<Link className="w-full" href={`profile/${playerData.username}`}>
-					<Button className="text-center w-full" variant={'ghost'}>
-						{playerData.username}
-					</Button>
-				</Link>
-				<Button
-					size={'icon'}
-					variant={'ghost'}
-					onClick={() => removePlayerData(playerData.username)}
-				>
-					<Trash2 />
-				</Button>
+				{pathname !== `/profile/${playerData.username}` ? (
+					<>
+						<Link className="w-full" href={`profile/${playerData.username}`}>
+							<Button className="text-center w-full" variant={'ghost'}>
+								{playerData.username}
+							</Button>
+						</Link>
+						<Button
+							size={'icon'}
+							variant={'ghost'}
+							onClick={() => removePlayerData(playerData.username)}
+						>
+							<Trash2 />
+						</Button>
+					</>
+				) : (
+					<h2>{playerData.username}</h2>
+				)}
 			</div>
-			{/* TODO Add remove from table button */}
-			{/* TODO Add go to profile button - display chart + historic xp gains */}
 			<Table className="xl:text-[12px] lg:text-[16px] px-2">
 				<TableCaption>
 					Last Updated: {new Date(playerData.timestamp).toLocaleString()}
