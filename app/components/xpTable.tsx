@@ -14,6 +14,7 @@ import { capitalizeFirstLetter } from '@/lib/utils'
 import { PlayerContextI } from '@/types/context'
 import { PlayerDataI } from '@/types/playerData'
 import { Trash2 } from 'lucide-react'
+import Link from 'next/link'
 import { useContext } from 'react'
 import { PlayerContext } from '../context/playerContext'
 
@@ -31,7 +32,11 @@ const XpTable: React.FC<XpTableI> = ({ playerData }) => {
 	return (
 		<>
 			<div className="flex justify-between items-center">
-				<h1 className="text-center w-full">{playerData.username}</h1>
+				<Link className="w-full" href={`profile/${playerData.username}`}>
+					<Button className="text-center w-full" variant={'ghost'}>
+						{playerData.username}
+					</Button>
+				</Link>
 				<Button
 					size={'icon'}
 					variant={'ghost'}
