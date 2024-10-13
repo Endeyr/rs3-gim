@@ -13,7 +13,6 @@ interface ProfilePagePropsI {
 	params: { username: string }
 }
 
-// TODO display chart + historic xp gains, add refresh button
 const ProfilePage = ({ params }: ProfilePagePropsI) => {
 	const { username } = params
 	const { playerDataArray, isLoading } = useContext(
@@ -29,7 +28,7 @@ const ProfilePage = ({ params }: ProfilePagePropsI) => {
 	if (!userData) return <div>PlayerData not found</div>
 
 	return (
-		<div className="grid grid-cols-1 lg:grid-cols-3 w-full space-x-2">
+		<div className="grid grid-cols-1 lg:grid-cols-3 w-full space-x-2 space-y-4">
 			<div className="col-span-1 px-2">
 				<XpTable playerData={userData} />
 			</div>
@@ -37,12 +36,13 @@ const ProfilePage = ({ params }: ProfilePagePropsI) => {
 				<XpChart
 					chartData={exampleChartData}
 					chartConfig={exampleChartConfig}
-					chartDescription=""
-					chartTitle=""
-					chartFooterDate=""
-					chartFooterDescription=""
+					chartDescription={`Skill`}
+					chartTitle={`${userData.username}`}
+					chartFooterDate="Jan - Feb"
+					chartFooterDescription="XP Gained by Skill"
 				/>
 			</div>
+			<div>Questing Goes Here?</div>
 		</div>
 	)
 }
