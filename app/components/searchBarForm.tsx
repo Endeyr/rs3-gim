@@ -26,19 +26,7 @@ import { useContext, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { PlayerContext } from '../context/playerContext'
-
-const formSchema = z.object({
-	name: z
-		.string()
-		.trim()
-		.min(1, { message: 'Username must be at least 1 character.' })
-		.max(12, { message: 'Username cannot exceed 12 characters' })
-		.regex(/^(?!.*__)(?!.* _)(?! _)[a-zA-Z0-9][a-zA-Z0-9_ ]*[a-zA-Z0-9]$/, {
-			message:
-				'Username can only contain letters, numbers, spaces, and underscores, and cannot start or end with an underscore or space.',
-		}),
-	gamemode: z.enum(hiscores.gamemodes),
-})
+import { formSchema } from '@/schemas/searchBarFormSchema'
 
 const SearchBarForm: React.FC = () => {
 	const {
