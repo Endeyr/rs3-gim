@@ -17,11 +17,12 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select'
-import { hiscores, MAX_AGE } from '@/lib/const'
+import { hiscores } from '@/lib/const'
+import { isPlayerOutOfDate } from '@/lib/utils'
 import { PlayerContextI } from '@/types/context'
 import { zodResolver } from '@hookform/resolvers/zod'
 import axios from 'axios'
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { PlayerContext } from '../context/playerContext'
@@ -44,10 +45,14 @@ const SearchBarForm: React.FC = () => {
 		playerDataArray,
 		updatePlayerData,
 		updateIsLoading,
-		updateError,
+		setStatus,
 		isLoading,
-		error,
+		isError,
+		message,
+		isSuccess,
 	} = useContext(PlayerContext) as PlayerContextI
+
+	const [isOpen, setIsOpen] = useState(false)
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -57,25 +62,19 @@ const SearchBarForm: React.FC = () => {
 		},
 	})
 
-	// TODO: add success message, clear username after search
+	const toggleDropdown = () => setIsOpen(!isOpen)
+
 	const onSubmit = async (values: z.infer<typeof formSchema>) => {
 		updateIsLoading(true)
-		const existingPlayerIndex = playerDataArray.findIndex(
+		setStatus('', 'reset')
+
+		const existingPlayer = playerDataArray.find(
 			(player) => player.username === values.name
 		)
+		const isOutOfDate = !existingPlayer || isPlayerOutOfDate(existingPlayer)
 
-		let playerOutOfDate
-		if (playerDataArray[existingPlayerIndex]) {
-			playerOutOfDate =
-				existingPlayerIndex !== -1 &&
-				Date.now() -
-					new Date(playerDataArray[existingPlayerIndex].timestamp).getTime() >
-					MAX_AGE
-		}
-
-		if (existingPlayerIndex === -1 || playerOutOfDate) {
+		if (isOutOfDate) {
 			try {
-				updateError('')
 				const response = await axios(
 					`/api?username=${encodeURIComponent(values.name)}&gamemode=${
 						values.gamemode
@@ -83,15 +82,18 @@ const SearchBarForm: React.FC = () => {
 					{ timeout: 10000 }
 				)
 				updatePlayerData(response.data)
+				setStatus('Player data updated successfully.', 'success')
+				form.reset()
 			} catch (error) {
 				if (axios.isAxiosError(error)) {
-					updateError(
+					setStatus(
 						error.response?.status === 500
 							? 'Player not found.'
-							: 'An error occurred, please try again later.'
+							: 'An error occurred, please try again later.',
+						'error'
 					)
 				} else {
-					updateError(`An unexpected error occurred; ${error}`)
+					setStatus(`An unexpected error occurred; ${error}`, 'error')
 					console.error(`Unexpected error: ${error}`)
 				}
 			} finally {
@@ -99,7 +101,7 @@ const SearchBarForm: React.FC = () => {
 			}
 		} else {
 			updateIsLoading(false)
-			updateError('Player data is up to date.')
+			setStatus('Player data is up to date.', 'error')
 		}
 	}
 
@@ -110,8 +112,16 @@ const SearchBarForm: React.FC = () => {
 					onSubmit={form.handleSubmit(onSubmit)}
 					className="space-y-4 w-full flex flex-col justify-evenly items-center"
 					aria-busy={isLoading}
+					aria-live="polite"
 				>
-					<fieldset disabled={isLoading} className="space-y-4 w-full">
+					<fieldset
+						disabled={isLoading}
+						className="space-y-4 w-full"
+						aria-labelledby="search-form-legend"
+					>
+						<legend id="search-options" className="sr-only">
+							Search Options
+						</legend>
 						<FormField
 							control={form.control}
 							name="name"
@@ -123,8 +133,11 @@ const SearchBarForm: React.FC = () => {
 											placeholder="Runescape Username"
 											{...field}
 											disabled={isLoading}
+											aria-describedby="username-description username-error"
+											aria-invalid={!!form.formState.errors.name}
 										/>
 									</FormControl>
+
 									<FormMessage />
 								</FormItem>
 							)}
@@ -138,8 +151,14 @@ const SearchBarForm: React.FC = () => {
 									<Select
 										onValueChange={field.onChange}
 										defaultValue={field.value}
+										onOpenChange={toggleDropdown}
 									>
-										<SelectTrigger className="w-[180px]">
+										<SelectTrigger
+											className="w-[180px]"
+											tabIndex={0}
+											aria-haspopup="listbox"
+											aria-expanded={isOpen}
+										>
 											<SelectValue placeholder="Gamemode">
 												{field.value.charAt(0).toUpperCase() +
 													field.value.slice(1)}
@@ -164,13 +183,20 @@ const SearchBarForm: React.FC = () => {
 					</div>
 				</form>
 			</Form>
-			{error && (
+			{message && (
 				<p
-					className="text-red-500 mt-2 w-full break-words"
-					role="alert"
+					className={`mt-2 w-full break-words ${
+						isError
+							? 'text-red-500'
+							: isSuccess
+							? 'text-green-500'
+							: 'text-primary'
+					}`}
+					role={isError ? 'alert' : isSuccess ? 'status' : ''}
 					aria-live="polite"
+					aria-atomic="true"
 				>
-					{error}
+					{message}
 				</p>
 			)}
 		</div>
