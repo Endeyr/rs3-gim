@@ -66,7 +66,7 @@ const XpTable: React.FC<XpTableI> = ({ playerData }) => {
 				) : (
 					<>
 						<h2 id="player-actions">{playerData.username}</h2>
-						{!isOutOfDate && (
+						{isOutOfDate && (
 							<Button
 								size={'icon'}
 								variant={'ghost'}
