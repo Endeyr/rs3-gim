@@ -10,10 +10,10 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table'
-import { capitalizeFirstLetter } from '@/lib/utils'
+import { capitalizeFirstLetter, isPlayerOutOfDate } from '@/lib/utils'
 import { PlayerContextI } from '@/types/context'
 import { PlayerDataI } from '@/types/playerData'
-import { Trash2 } from 'lucide-react'
+import { RefreshCw, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useContext } from 'react'
@@ -24,8 +24,12 @@ export interface XpTableI {
 }
 
 const XpTable: React.FC<XpTableI> = ({ playerData }) => {
-	const { removePlayerData } = useContext(PlayerContext) as PlayerContextI
+	const { removePlayerData, updatePlayerData } = useContext(
+		PlayerContext
+	) as PlayerContextI
 	const pathname = usePathname()
+
+	const isOutOfDate = playerData ? isPlayerOutOfDate(playerData) : true
 
 	if (!playerData) {
 		return null
@@ -33,11 +37,19 @@ const XpTable: React.FC<XpTableI> = ({ playerData }) => {
 
 	return (
 		<>
-			<div className="flex justify-between items-center">
+			<div
+				className="flex justify-center items-center gap-2 w-full"
+				role="group"
+				aria-labelledby="player-actions"
+			>
 				{pathname !== `/profile/${playerData.username}` ? (
 					<>
 						<Link className="w-full" href={`profile/${playerData.username}`}>
-							<Button className="text-center w-full" variant={'ghost'}>
+							<Button
+								className="text-center w-full"
+								variant={'ghost'}
+								aria-label={`Go to ${playerData.username}'s profile`}
+							>
 								{playerData.username}
 							</Button>
 						</Link>
@@ -45,12 +57,26 @@ const XpTable: React.FC<XpTableI> = ({ playerData }) => {
 							size={'icon'}
 							variant={'ghost'}
 							onClick={() => removePlayerData(playerData.username)}
+							aria-label={`Remove ${playerData.username} from data`}
+							aria-disabled={isOutOfDate ? 'true' : 'false'}
 						>
 							<Trash2 />
 						</Button>
 					</>
 				) : (
-					<h2>{playerData.username}</h2>
+					<>
+						<h2 id="player-actions">{playerData.username}</h2>
+						{!isOutOfDate && (
+							<Button
+								size={'icon'}
+								variant={'ghost'}
+								onClick={() => updatePlayerData(playerData)}
+								aria-label={`Refresh ${playerData.username}'s data`}
+							>
+								<RefreshCw />
+							</Button>
+						)}
+					</>
 				)}
 			</div>
 			<Table className="xl:text-[12px] lg:text-[16px] px-2">
