@@ -6,6 +6,8 @@ export interface PlayerContextI {
 	removePlayerData: (username: string) => void
 	isLoading: boolean
 	updateIsLoading: (newIsLoading: boolean) => void
-	error: string
-	updateError: (newError: string) => void
+	isError: boolean
+	isSuccess: boolean
+	message: string
+	setStatus: (newMessage: string, type: 'error' | 'success' | 'reset') => void
 }

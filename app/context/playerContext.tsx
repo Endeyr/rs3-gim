@@ -7,12 +7,14 @@ import { createContext, useCallback, useEffect, useState } from 'react'
 const defaultPlayerContext: PlayerContextI = {
 	playerDataArray: [],
 	isLoading: true,
-	error: '',
+	isError: false,
+	isSuccess: false,
+	message: '',
 	updatePlayerDataArray: () => {},
 	updatePlayerData: () => {},
 	removePlayerData: () => {},
 	updateIsLoading: () => {},
-	updateError: () => {},
+	setStatus: () => {},
 }
 
 export const PlayerContext = createContext<PlayerContextI>(defaultPlayerContext)
@@ -22,7 +24,9 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
 	const [playerDataArray, setPlayerDataArray] = useState<PlayerDataI[]>([])
 	const [isLoading, setIsLoading] = useState(true)
-	const [error, setError] = useState('')
+	const [isError, setIsError] = useState(false)
+	const [isSuccess, setIsSuccess] = useState(true)
+	const [message, setMessage] = useState('')
 
 	useEffect(() => {
 		const savedPlayerDataArray = localStorage.getItem('playerDataArray')
@@ -107,9 +111,19 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
 	const updateIsLoading = useCallback((newIsLoading: boolean) => {
 		setIsLoading(newIsLoading)
 	}, [])
-	const updateError = useCallback((newError: string) => {
-		setError(newError)
-	}, [])
+
+	const setStatus = useCallback(
+		(newMessage: string, type: 'error' | 'success' | 'reset') => {
+			setMessage(newMessage)
+			setIsError(type === 'error')
+			setIsSuccess(type === 'success')
+			if (type === 'reset') {
+				setIsError(false)
+				setIsSuccess(false)
+			}
+		},
+		[]
+	)
 
 	return (
 		<PlayerContext.Provider
@@ -120,8 +134,11 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
 				removePlayerData,
 				isLoading,
 				updateIsLoading,
-				error,
-				updateError,
+				isError,
+				setStatus,
+				isSuccess,
+
+				message,
 			}}
 		>
 			{children}
