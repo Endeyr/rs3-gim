@@ -48,7 +48,12 @@ describe('runemetrics api calls', () => {
 
 			expect(player).toEqual({
 				...mockRunemetricsMonthlyXpData,
-				timestamp: expect.any(Date),
+				monthlyXpGain: mockRunemetricsMonthlyXpData.monthlyXpGain.map(
+					(xpGain) => ({
+						...xpGain,
+						timestamp: expect.any(Date),
+					})
+				),
 			})
 
 			expect(mockedAxios.get).toHaveBeenCalledWith(

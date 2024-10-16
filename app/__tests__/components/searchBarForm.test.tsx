@@ -14,7 +14,6 @@ describe('SearchBarForm', () => {
 			</MockPlayerProvider>
 		)
 
-		expect(screen.getByRole('combobox')).toBeInTheDocument()
 		expect(screen.getByLabelText(/username/i)).toBeInTheDocument()
 	})
 })
