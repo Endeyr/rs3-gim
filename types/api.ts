@@ -42,6 +42,7 @@ export type MonthlyExperienceGain = {
 	totalXp: number
 	timestamp?: Date
 	name?: string
+	skillName?: string
 }
 
 export type Profile = {
@@ -73,6 +74,7 @@ export type ProfileSkills = {
 	xp: number
 	rank: number
 	id: number
+	skillName?: string
 }
 
 export type Quests = {
