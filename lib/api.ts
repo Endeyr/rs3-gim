@@ -12,7 +12,7 @@ export const getPlayer = async (
 			throw new Error(`Invalid gamemode: ${gamemode}`)
 		}
 		const url = `${endpoint}?player=${encodeURIComponent(name)}`
-		const response = await axios.get(url)
+		const response = await axios.get(url, { timeout: 10000 })
 		const data = response.data
 		if (!data || typeof data !== 'string') {
 			throw new Error('API response data is invalid or undefined')

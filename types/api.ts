@@ -40,6 +40,8 @@ export type MonthlyExperienceGain = {
 	skillId: number
 	totalGain: number
 	totalXp: number
+	timestamp?: Date
+	name?: string
 }
 
 export type Profile = {
@@ -57,6 +59,7 @@ export type Profile = {
 	activities: ProfileActivities[]
 	skillvalues: ProfileSkills[]
 	loggedIn: string
+	timestamp?: Date
 }
 
 type ProfileActivities = {
@@ -75,6 +78,8 @@ export type ProfileSkills = {
 export type Quests = {
 	quests: Quest[]
 	loggedIn: string
+	timestamp?: Date
+	name?: string
 }
 
 export type Quest = {
