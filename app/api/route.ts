@@ -1,4 +1,4 @@
-import { getPlayer } from '@/lib/api'
+import { getPlayer } from '@/lib/api/hiscores'
 import { NextRequest, NextResponse } from 'next/server'
 export async function GET(req: NextRequest) {
 	const searchParams = req.nextUrl.searchParams
