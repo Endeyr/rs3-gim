@@ -47,9 +47,7 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
 					...prevData,
 					...newPlayerDataArray.filter(
 						(newPlayer) =>
-							!prevData.some(
-								(prevPlayer) => prevPlayer.username === newPlayer.username
-							)
+							!prevData.some((prevPlayer) => prevPlayer.name === newPlayer.name)
 					),
 				]
 
@@ -66,9 +64,10 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
 	)
 
 	const updatePlayerData = useCallback((newPlayerData: PlayerDataI) => {
+		newPlayerData.skillvalues.sort((a, b) => a.id - b.id)
 		setPlayerDataArray((prevData) => {
 			const existingPlayerIndex = prevData.findIndex(
-				(player) => player.username === newPlayerData.username
+				(player) => player.name === newPlayerData.name
 			)
 
 			let updatedData: PlayerDataI[]
@@ -92,11 +91,9 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
 		})
 	}, [])
 
-	const removePlayerData = useCallback((username: string) => {
+	const removePlayerData = useCallback((name: string) => {
 		setPlayerDataArray((prevData) => {
-			const updatedData = prevData.filter(
-				(player) => player.username !== username
-			)
+			const updatedData = prevData.filter((player) => player.name !== name)
 
 			try {
 				localStorage.setItem(`playerDataArray`, JSON.stringify(updatedData))

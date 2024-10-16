@@ -42,22 +42,22 @@ const XpTable: React.FC<XpTableI> = ({ playerData }) => {
 				role="group"
 				aria-labelledby="player-actions"
 			>
-				{pathname !== `/profile/${playerData.username}` ? (
+				{pathname !== `/profile/${playerData.name}` ? (
 					<>
-						<Link className="w-full" href={`profile/${playerData.username}`}>
+						<Link className="w-full" href={`profile/${playerData.name}`}>
 							<Button
 								className="text-center w-full"
 								variant={'ghost'}
-								aria-label={`Go to ${playerData.username}'s profile`}
+								aria-label={`Go to ${playerData.name}'s profile`}
 							>
-								{playerData.username}
+								{playerData.name}
 							</Button>
 						</Link>
 						<Button
 							size={'icon'}
 							variant={'ghost'}
-							onClick={() => removePlayerData(playerData.username)}
-							aria-label={`Remove ${playerData.username} from data`}
+							onClick={() => removePlayerData(playerData.name)}
+							aria-label={`Remove ${playerData.name} from data`}
 							aria-disabled={isOutOfDate ? 'true' : 'false'}
 						>
 							<Trash2 />
@@ -65,13 +65,13 @@ const XpTable: React.FC<XpTableI> = ({ playerData }) => {
 					</>
 				) : (
 					<>
-						<h2 id="player-actions">{playerData.username}</h2>
+						<h2 id="player-actions">{playerData.name}</h2>
 						{isOutOfDate && (
 							<Button
 								size={'icon'}
 								variant={'ghost'}
 								onClick={() => updatePlayerData(playerData)}
-								aria-label={`Refresh ${playerData.username}'s data`}
+								aria-label={`Refresh ${playerData.name}'s data`}
 							>
 								<RefreshCw />
 							</Button>
@@ -80,7 +80,7 @@ const XpTable: React.FC<XpTableI> = ({ playerData }) => {
 				)}
 			</div>
 			<Table className="xl:text-[12px] lg:text-[16px] px-2">
-				<TableCaption>
+				<TableCaption className="w-full">
 					Last Updated: {new Date(playerData.timestamp).toLocaleString()}
 				</TableCaption>
 				<TableHeader>
@@ -98,15 +98,17 @@ const XpTable: React.FC<XpTableI> = ({ playerData }) => {
 					</TableRow>
 				</TableHeader>
 				<TableBody>
-					{Object.entries(playerData.skills).map(([skill, data]) => (
-						<TableRow key={skill}>
-							<TableCell>{capitalizeFirstLetter(skill)}</TableCell>
-							<TableCell className="text-right">
-								{(data.rank || 0).toLocaleString()}
+					{playerData.skillvalues.map((skill) => (
+						<TableRow key={skill.id}>
+							<TableCell>
+								{capitalizeFirstLetter(skill.skillName || 'Unknown Skill')}
 							</TableCell>
-							<TableCell className="text-right">{data.level || 0}</TableCell>
 							<TableCell className="text-right">
-								{(data.experience || 0).toLocaleString()}
+								{(skill.rank || 0).toLocaleString()}
+							</TableCell>
+							<TableCell className="text-right">{skill.level || 0}</TableCell>
+							<TableCell className="text-right">
+								{(skill.xp || 0).toLocaleString()}
 							</TableCell>
 						</TableRow>
 					))}

@@ -44,7 +44,7 @@ const Dashboard = () => {
 					<li>No players found. Please add some players.</li>
 				) : (
 					playerDataArray.map((playerData) => (
-						<li key={playerData.username} className="w-full">
+						<li key={playerData.name} className="w-full">
 							<XpTable playerData={playerData} />
 						</li>
 					))

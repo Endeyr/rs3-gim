@@ -19,9 +19,7 @@ const ProfilePage = ({ params }: ProfilePagePropsI) => {
 		PlayerContext
 	) as PlayerContextI
 
-	const userData = playerDataArray.find(
-		(player) => player.username === username
-	)
+	const userData = playerDataArray.find((player) => player.name === username)
 
 	if (isLoading) return <div>Loading...</div>
 
@@ -37,7 +35,7 @@ const ProfilePage = ({ params }: ProfilePagePropsI) => {
 					chartData={exampleChartData}
 					chartConfig={exampleChartConfig}
 					chartDescription={`Skill`}
-					chartTitle={`${userData.username}`}
+					chartTitle={`${userData.name}`}
 					chartFooterDate="Jan - Feb"
 					chartFooterDescription="XP Gained by Skill"
 				/>

@@ -1,4 +1,3 @@
-import { hiscores } from '@/lib/const'
 import { z } from 'zod'
 
 export const formSchema = z.object({
@@ -11,5 +10,4 @@ export const formSchema = z.object({
 			message:
 				'Username can only contain letters, numbers, spaces, and underscores, and cannot start or end with an underscore or space.',
 		}),
-	gamemode: z.enum(hiscores.gamemodes),
 })

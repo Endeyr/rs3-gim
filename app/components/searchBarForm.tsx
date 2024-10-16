@@ -10,20 +10,12 @@ import {
 	FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '@/components/ui/select'
-import { hiscores } from '@/lib/const'
 import { isPlayerOutOfDate } from '@/lib/utils'
 import { formSchema } from '@/schemas/searchBarFormSchema'
 import { PlayerContextI } from '@/types/context'
 import { zodResolver } from '@hookform/resolvers/zod'
 import axios from 'axios'
-import { useContext, useState } from 'react'
+import { useContext } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { PlayerContext } from '../context/playerContext'
@@ -40,24 +32,19 @@ const SearchBarForm: React.FC = () => {
 		isSuccess,
 	} = useContext(PlayerContext) as PlayerContextI
 
-	const [isOpen, setIsOpen] = useState(false)
-
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			name: '',
-			gamemode: 'normal',
 		},
 	})
-
-	const toggleDropdown = () => setIsOpen(!isOpen)
 
 	const onSubmit = async (values: z.infer<typeof formSchema>) => {
 		updateIsLoading(true)
 		setStatus('', 'reset')
 
 		const existingPlayer = playerDataArray.find(
-			(player) => player.username === values.name
+			(player) => player.name === values.name
 		)
 		const isOutOfDate = !existingPlayer || isPlayerOutOfDate(existingPlayer)
 
@@ -128,39 +115,6 @@ const SearchBarForm: React.FC = () => {
 									</FormControl>
 
 									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="gamemode"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Gamemode</FormLabel>
-									<Select
-										onValueChange={field.onChange}
-										defaultValue={field.value}
-										onOpenChange={toggleDropdown}
-									>
-										<SelectTrigger
-											className="w-[180px]"
-											tabIndex={0}
-											aria-haspopup="listbox"
-											aria-expanded={isOpen}
-										>
-											<SelectValue placeholder="Gamemode">
-												{field.value.charAt(0).toUpperCase() +
-													field.value.slice(1)}
-											</SelectValue>
-										</SelectTrigger>
-										<SelectContent>
-											{hiscores.gamemodes.map((mode) => (
-												<SelectItem key={mode} value={mode}>
-													{mode.charAt(0).toUpperCase() + mode.slice(1)}
-												</SelectItem>
-											))}
-										</SelectContent>
-									</Select>
 								</FormItem>
 							)}
 						/>
