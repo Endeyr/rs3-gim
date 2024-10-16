@@ -26,7 +26,8 @@ describe('hiscores api calls', () => {
 			timestamp: expect.any(Date),
 		})
 		expect(mockedAxios.get).toHaveBeenCalledWith(
-			expect.stringContaining('testPlayer')
+			expect.stringContaining('testPlayer'),
+			expect.objectContaining({ timeout: 10000 })
 		)
 	})
 })

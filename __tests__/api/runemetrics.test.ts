@@ -1,5 +1,10 @@
 import axios from 'axios'
 import {
+	mockRunemetricsMonthlyXpData,
+	mockRunemetricsProfileData,
+	mockRunemetricsQuestsData,
+} from './../../__mocks__/mockTestData'
+import {
 	getMonthlyXpData,
 	getProfileData,
 	getQuestData,
@@ -14,43 +19,59 @@ describe('runemetrics api calls', () => {
 	})
 
 	describe('getProfileData', () => {
-		it('', async () => {
-			mockedAxios.get.mockResolvedValueOnce({})
+		it('gets profile by name successfully', async () => {
+			mockedAxios.get.mockResolvedValueOnce({
+				data: mockRunemetricsProfileData,
+			})
 
 			const player = await getProfileData('testPlayer')
 
-			expect(player).toEqual({})
+			expect(player).toEqual({
+				...mockRunemetricsProfileData,
+				timestamp: expect.any(Date),
+			})
 
 			expect(mockedAxios.get).toHaveBeenCalledWith(
-				expect.stringContaining('testPlayer')
+				expect.stringContaining('testPlayer'),
+				expect.objectContaining({ timeout: 10000 })
 			)
 		})
 	})
 
 	describe('getMonthlyXpData', () => {
-		it('', async () => {
-			mockedAxios.get.mockResolvedValueOnce({})
+		it('gets monthly xp by name and skill id successfully', async () => {
+			mockedAxios.get.mockResolvedValueOnce({
+				data: mockRunemetricsMonthlyXpData,
+			})
 
-			const player = await getMonthlyXpData('testPlayer', 1)
+			const player = await getMonthlyXpData('testPlayer', 0)
 
-			expect(player).toEqual({})
+			expect(player).toEqual({
+				...mockRunemetricsMonthlyXpData,
+				timestamp: expect.any(Date),
+			})
 
 			expect(mockedAxios.get).toHaveBeenCalledWith(
-				expect.stringContaining('testPlayer')
+				expect.stringContaining('testPlayer'),
+				expect.objectContaining({ timeout: 10000 })
 			)
 		})
 	})
 
 	describe('getQuestData', () => {
-		it('', async () => {
-			mockedAxios.get.mockResolvedValueOnce({})
+		it('gets quest data by name successfully', async () => {
+			mockedAxios.get.mockResolvedValueOnce({ data: mockRunemetricsQuestsData })
 
 			const player = await getQuestData('testPlayer')
 
-			expect(player).toEqual({})
+			expect(player).toEqual({
+				...mockRunemetricsQuestsData,
+				timestamp: expect.any(Date),
+			})
 
 			expect(mockedAxios.get).toHaveBeenCalledWith(
-				expect.stringContaining('testPlayer')
+				expect.stringContaining('testPlayer'),
+				expect.objectContaining({ timeout: 10000 })
 			)
 		})
 	})

@@ -127,3 +127,307 @@ export const mockParsedPlayerData = {
 	timestamp: new Date(),
 	username: 'testPlayer',
 }
+
+export const mockRunemetricsProfileData = {
+	magic: 0,
+	questsstarted: 0,
+	totalskill: 0,
+	questscomplete: 0,
+	questsnotstarted: 0,
+	totalxp: 0,
+	ranged: 0,
+	activities: [
+		{ date: '04-Aug-2024 17:20', details: 'mock details', text: 'mock text' },
+		{ date: '03-Aug-2024 18:04', details: 'mock details', text: 'mock text' },
+		{ date: '03-Aug-2024 17:48', details: 'mock details', text: 'mock text' },
+		{ date: '02-Aug-2024 17:48', details: 'mock details', text: 'mock text' },
+		{ date: '01-Aug-2024 17:48', details: 'mock details', text: 'mock text' },
+	],
+	skillvalues: [
+		{
+			level: 0,
+			xp: 0,
+			rank: 0,
+			id: 28,
+		},
+		{
+			level: 0,
+			xp: 0,
+			rank: 0,
+			id: 27,
+		},
+		{
+			level: 0,
+			xp: 0,
+			rank: 0,
+			id: 26,
+		},
+		{
+			level: 0,
+			xp: 0,
+			rank: 0,
+			id: 25,
+		},
+		{
+			level: 0,
+			xp: 0,
+			rank: 0,
+			id: 24,
+		},
+		{
+			level: 0,
+			xp: 0,
+			rank: 0,
+			id: 23,
+		},
+		{
+			level: 0,
+			xp: 0,
+			rank: 0,
+			id: 22,
+		},
+		{
+			level: 0,
+			xp: 0,
+			rank: 0,
+			id: 21,
+		},
+		{
+			level: 0,
+			xp: 0,
+			rank: 0,
+			id: 20,
+		},
+		{
+			level: 0,
+			xp: 0,
+			rank: 0,
+			id: 19,
+		},
+		{
+			level: 0,
+			xp: 0,
+			rank: 0,
+			id: 18,
+		},
+		{
+			level: 0,
+			xp: 0,
+			rank: 0,
+			id: 17,
+		},
+		{
+			level: 0,
+			xp: 0,
+			rank: 0,
+			id: 16,
+		},
+		{
+			level: 0,
+			xp: 0,
+			rank: 0,
+			id: 15,
+		},
+		{
+			level: 0,
+			xp: 0,
+			rank: 0,
+			id: 14,
+		},
+		{
+			level: 0,
+			xp: 0,
+			rank: 0,
+			id: 13,
+		},
+		{
+			level: 0,
+			xp: 0,
+			rank: 0,
+			id: 12,
+		},
+		{
+			level: 0,
+			xp: 0,
+			rank: 0,
+			id: 11,
+		},
+		{
+			level: 0,
+			xp: 0,
+			rank: 0,
+			id: 10,
+		},
+		{
+			level: 0,
+			xp: 0,
+			rank: 0,
+			id: 9,
+		},
+		{
+			level: 0,
+			xp: 0,
+			rank: 0,
+			id: 8,
+		},
+		{
+			level: 0,
+			xp: 0,
+			rank: 0,
+			id: 7,
+		},
+		{
+			level: 0,
+			xp: 0,
+			rank: 0,
+			id: 6,
+		},
+		{
+			level: 0,
+			xp: 0,
+			rank: 0,
+			id: 5,
+		},
+		{
+			level: 0,
+			xp: 0,
+			rank: 0,
+			id: 4,
+		},
+		{
+			level: 0,
+			xp: 0,
+			rank: 0,
+			id: 3,
+		},
+		{
+			level: 0,
+			xp: 0,
+			rank: 0,
+			id: 2,
+		},
+		{
+			level: 0,
+			xp: 0,
+			rank: 0,
+			id: 1,
+		},
+		{
+			level: 0,
+			xp: 0,
+			rank: 0,
+			id: 0,
+		},
+	],
+	name: 'testPlayer',
+	rank: '100,100',
+	melee: 0,
+	combatlevel: 0,
+	loggedIn: 'false',
+	timestamp: new Date(),
+}
+
+// API result has around 340 quest objects
+export const mockRunemetricsQuestsData = {
+	quests: [
+		{
+			title: 'Mock Quest',
+			status: 'COMPLETED',
+			difficulty: 1,
+			members: true,
+			questPoints: 1,
+			userEligible: true,
+		},
+		{
+			title: 'Mock Quest 2',
+			status: 'NOT_STARTED',
+			difficulty: 1,
+			members: false,
+			questPoints: 1,
+			userEligible: false,
+		},
+		{
+			title: 'Mock Quest 3',
+			status: 'STARTED',
+			difficulty: 1,
+			members: true,
+			questPoints: 1,
+			userEligible: true,
+		},
+	],
+	loggedIn: 'false',
+}
+
+export const mockRunemetricsMonthlyXpData = {
+	monthlyXpGain: [
+		{
+			skillId: 0,
+			totalXp: 0,
+			averageXpGain: 0,
+			totalGain: 0,
+			monthData: [
+				{
+					xpGain: 0,
+					timestamp: 1700147668614,
+					rank: 0,
+				},
+				{
+					xpGain: 0,
+					timestamp: 1702739668614,
+					rank: 0,
+				},
+				{
+					xpGain: 0,
+					timestamp: 1705418068614,
+					rank: 0,
+				},
+				{
+					xpGain: 0,
+					timestamp: 1708096468614,
+					rank: 0,
+				},
+				{
+					xpGain: 0,
+					timestamp: 1710602068614,
+					rank: 0,
+				},
+				{
+					xpGain: 0,
+					timestamp: 1713276868614,
+					rank: 0,
+				},
+				{
+					xpGain: 0,
+					timestamp: 1715868868614,
+					rank: 0,
+				},
+				{
+					xpGain: 0,
+					timestamp: 1718547268614,
+					rank: 0,
+				},
+				{
+					xpGain: 0,
+					timestamp: 1722278089630,
+					rank: 0,
+				},
+				{
+					xpGain: 0,
+					timestamp: 1722767363533,
+					rank: 0,
+				},
+				{
+					xpGain: 0,
+					timestamp: 1726496068614,
+					rank: 0,
+				},
+				{
+					xpGain: 0,
+					timestamp: 1729088068614,
+					rank: 0,
+				},
+			],
+		},
+	],
+	loggedIn: 'false',
+}
