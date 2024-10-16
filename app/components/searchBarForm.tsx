@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/select'
 import { hiscores } from '@/lib/const'
 import { isPlayerOutOfDate } from '@/lib/utils'
+import { formSchema } from '@/schemas/searchBarFormSchema'
 import { PlayerContextI } from '@/types/context'
 import { zodResolver } from '@hookform/resolvers/zod'
 import axios from 'axios'
@@ -26,7 +27,6 @@ import { useContext, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { PlayerContext } from '../context/playerContext'
-import { formSchema } from '@/schemas/searchBarFormSchema'
 
 const SearchBarForm: React.FC = () => {
 	const {
@@ -64,9 +64,7 @@ const SearchBarForm: React.FC = () => {
 		if (isOutOfDate) {
 			try {
 				const response = await axios(
-					`/api?username=${encodeURIComponent(values.name)}&gamemode=${
-						values.gamemode
-					}`,
+					`/api/runemetrics/getProfile?name=${encodeURIComponent(values.name)}`,
 					{ timeout: 10000 }
 				)
 				updatePlayerData(response.data)
@@ -74,10 +72,13 @@ const SearchBarForm: React.FC = () => {
 				form.reset()
 			} catch (error) {
 				if (axios.isAxiosError(error)) {
+					console.log(error)
 					setStatus(
 						error.response?.status === 500
 							? 'Player not found.'
-							: 'An error occurred, please try again later.',
+							: error.response
+							? error.response.data.error
+							: 'An error occurred',
 						'error'
 					)
 				} else {
