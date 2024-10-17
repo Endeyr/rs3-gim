@@ -1,7 +1,8 @@
 'use client'
 
-import { PlayerContextI } from '@/types/context'
-import { PlayerDataI } from '@/types/playerData'
+import type { PlayerContextI } from '@/types/context'
+import type { PlayerDataI } from '@/types/playerData'
+import type { MonthlyXpI } from '@/types/xpData'
 import { createContext, useCallback, useEffect, useState } from 'react'
 
 const defaultPlayerContext: PlayerContextI = {
@@ -15,6 +16,10 @@ const defaultPlayerContext: PlayerContextI = {
 	removePlayerData: () => {},
 	updateIsLoading: () => {},
 	setStatus: () => {},
+	monthlyXpDataArray: [],
+	updateMonthlyXpDataArray: () => {},
+	updateMonthlyXpData: () => {},
+	removeMonthlyXpData: () => {},
 }
 
 export const PlayerContext = createContext<PlayerContextI>(defaultPlayerContext)
@@ -23,6 +28,7 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
 	children,
 }) => {
 	const [playerDataArray, setPlayerDataArray] = useState<PlayerDataI[]>([])
+	const [monthlyXpDataArray, setMonthlyXpDataArray] = useState<MonthlyXpI[]>([])
 	const [isLoading, setIsLoading] = useState(true)
 	const [isError, setIsError] = useState(false)
 	const [isSuccess, setIsSuccess] = useState(true)
@@ -30,6 +36,8 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
 
 	useEffect(() => {
 		const savedPlayerDataArray = localStorage.getItem('playerDataArray')
+		const savedMonthlyXpData = localStorage.getItem('monthlyXpDataArray')
+
 		if (savedPlayerDataArray) {
 			try {
 				setPlayerDataArray(JSON.parse(savedPlayerDataArray))
@@ -37,19 +45,32 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
 				console.error('Failed to parse player data from localStorage:', error)
 			}
 		}
+
+		if (savedMonthlyXpData) {
+			try {
+				setMonthlyXpDataArray(JSON.parse(savedMonthlyXpData))
+			} catch (error) {
+				console.error(
+					'Failed to parse monthly XP data from localStorage:',
+					error
+				)
+			}
+		}
+
 		setIsLoading(false)
 	}, [])
 
 	const updatePlayerDataArray = useCallback(
 		(newPlayerDataArray: PlayerDataI[]) => {
 			setPlayerDataArray((prevData) => {
-				const combinedData = [
-					...prevData,
-					...newPlayerDataArray.filter(
-						(newPlayer) =>
-							!prevData.some((prevPlayer) => prevPlayer.name === newPlayer.name)
-					),
-				]
+				const newData = newPlayerDataArray.filter(
+					(newPlayer) =>
+						!prevData.some((prevPlayer) => prevPlayer.name === newPlayer.name)
+				)
+
+				if (newData.length === 0) return prevData
+
+				const combinedData = [...prevData, ...newData]
 
 				try {
 					localStorage.setItem('playerDataArray', JSON.stringify(combinedData))
@@ -70,16 +91,20 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
 				(player) => player.name === newPlayerData.name
 			)
 
-			let updatedData: PlayerDataI[]
-			if (existingPlayerIndex !== -1) {
-				updatedData = [
-					...prevData.slice(0, existingPlayerIndex),
-					newPlayerData,
-					...prevData.slice(existingPlayerIndex + 1),
-				]
-			} else {
-				updatedData = [...prevData, newPlayerData]
-			}
+			const isDataUpdated =
+				existingPlayerIndex !== -1 &&
+				JSON.stringify(prevData[existingPlayerIndex]) ===
+					JSON.stringify(newPlayerData)
+			if (isDataUpdated) return prevData
+
+			const updatedData =
+				existingPlayerIndex !== -1
+					? [
+							...prevData.slice(0, existingPlayerIndex),
+							newPlayerData,
+							...prevData.slice(existingPlayerIndex + 1),
+					  ]
+					: [...prevData, newPlayerData]
 
 			try {
 				localStorage.setItem(`playerDataArray`, JSON.stringify(updatedData))
@@ -94,6 +119,8 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
 	const removePlayerData = useCallback((name: string) => {
 		setPlayerDataArray((prevData) => {
 			const updatedData = prevData.filter((player) => player.name !== name)
+
+			if (updatedData.length === prevData.length) return prevData
 
 			try {
 				localStorage.setItem(`playerDataArray`, JSON.stringify(updatedData))
@@ -122,6 +149,80 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
 		[]
 	)
 
+	const updateMonthlyXpDataArray = useCallback(
+		(newMonthlyXpDataArray: MonthlyXpI[]) => {
+			setMonthlyXpDataArray((prevData) => {
+				const newData = newMonthlyXpDataArray.filter(
+					(newPlayer) =>
+						!prevData.some((prevPlayer) => prevPlayer.name === newPlayer.name)
+				)
+
+				if (newData.length === 0) return prevData
+
+				const combinedData = [...prevData, ...newData]
+
+				try {
+					localStorage.setItem(
+						'monthlyXpDataArray',
+						JSON.stringify(combinedData)
+					)
+				} catch (error) {
+					console.error(`Failed to update localStorage: ${error}`)
+				}
+
+				return combinedData
+			})
+		},
+		[]
+	)
+
+	const updateMonthlyXpData = useCallback((newMonthlyData: MonthlyXpI) => {
+		setMonthlyXpDataArray((prevData) => {
+			const existingPlayerIndex = prevData.findIndex(
+				(player) => player.name === newMonthlyData.name
+			)
+
+			const isDataUpdated =
+				existingPlayerIndex !== -1 &&
+				JSON.stringify(prevData[existingPlayerIndex]) ===
+					JSON.stringify(newMonthlyData)
+			if (isDataUpdated) return prevData
+
+			const updatedData =
+				existingPlayerIndex !== -1
+					? [
+							...prevData.slice(0, existingPlayerIndex),
+							newMonthlyData,
+							...prevData.slice(existingPlayerIndex + 1),
+					  ]
+					: [...prevData, newMonthlyData]
+
+			try {
+				localStorage.setItem(`monthlyXpDataArray`, JSON.stringify(updatedData))
+			} catch (error) {
+				console.error(`Failed to update localStorage: ${error}`)
+			}
+
+			return updatedData
+		})
+	}, [])
+
+	const removeMonthlyXpData = useCallback((name: string) => {
+		setMonthlyXpDataArray((prevData) => {
+			const updatedData = prevData.filter((player) => player.name !== name)
+
+			if (updatedData.length === prevData.length) return prevData
+
+			try {
+				localStorage.setItem(`monthlyXpDataArray`, JSON.stringify(updatedData))
+			} catch (error) {
+				console.error(`Failed to update localStorage: ${error}`)
+			}
+
+			return updatedData
+		})
+	}, [])
+
 	return (
 		<PlayerContext.Provider
 			value={{
@@ -136,6 +237,10 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
 				isSuccess,
 
 				message,
+				monthlyXpDataArray,
+				updateMonthlyXpDataArray,
+				updateMonthlyXpData,
+				removeMonthlyXpData,
 			}}
 		>
 			{children}

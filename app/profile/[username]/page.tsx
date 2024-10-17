@@ -16,15 +16,11 @@ interface ProfilePagePropsI {
 
 const ProfilePage = ({ params }: ProfilePagePropsI) => {
 	const { username } = params
-	const { playerDataArray, isLoading } = useContext(
-		PlayerContext
-	) as PlayerContextI
+	const { playerDataArray } = useContext(PlayerContext) as PlayerContextI
 
 	const userData = playerDataArray.find((player) => player.name === username)
 
 	// const userXpData = {}
-
-	if (isLoading) return <div>Loading...</div>
 
 	if (!userData) return <div>PlayerData not found</div>
 	// TODO update chart based on player data, make a call to the getMonthlyXp endpoint

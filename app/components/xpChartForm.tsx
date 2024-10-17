@@ -57,8 +57,8 @@ const XpChartForm = ({ username }: XpChartFormPropsI) => {
 					`/api/runemetrics/getMonthlyXp?name=${username}&skillId=${values.skillName}`
 				)
 				// update Xp Chart Data
-				console.log(monthlyXpResponse.data.monthlyXpGain)
-				// array ; averageXpGain, monthData[12], name, skillId, skillName, timestamp, totalGain, totalXp
+				console.log(monthlyXpResponse.data)
+
 				// only update when new month by timestamp?
 				setStatus('Player data updated successfully.', 'success')
 				form.reset()
@@ -85,6 +85,7 @@ const XpChartForm = ({ username }: XpChartFormPropsI) => {
 			setStatus('Player data is up to date.', 'error')
 		}
 	}
+
 	return (
 		<div className="w-full mx-auto px-2">
 			<Form {...form}>

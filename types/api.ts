@@ -32,6 +32,7 @@ export type Gamemode = (typeof hiscores.gamemodes)[number]
 export type MonthlyExperience = {
 	monthlyXpGain: MonthlyExperienceGain[]
 	loggedIn: string
+	name?: string
 }
 
 export type MonthlyExperienceGain = {
@@ -41,7 +42,6 @@ export type MonthlyExperienceGain = {
 	totalGain: number
 	totalXp: number
 	timestamp?: Date
-	name?: string
 	skillName?: string
 }
 
