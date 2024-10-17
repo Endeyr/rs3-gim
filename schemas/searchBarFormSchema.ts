@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const formSchema = z.object({
+export const searchBarFormSchema = z.object({
 	name: z
 		.string()
 		.trim()
