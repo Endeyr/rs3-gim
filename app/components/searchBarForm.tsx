@@ -50,11 +50,27 @@ const SearchBarForm: React.FC = () => {
 
 		if (isOutOfDate) {
 			try {
-				const response = await axios(
-					`/api/runemetrics/getProfile?name=${encodeURIComponent(values.name)}`,
-					{ timeout: 10000 }
-				)
-				updatePlayerData(response.data)
+				const [profileResponse, questResponse] = await Promise.all([
+					axios(
+						`/api/runemetrics/getProfile?name=${encodeURIComponent(
+							values.name
+						)}`,
+						{
+							timeout: 10000,
+						}
+					),
+					axios(
+						`/api/runemetrics/getQuest?name=${encodeURIComponent(values.name)}`,
+						{
+							timeout: 10000,
+						}
+					),
+				])
+				const data = {
+					...profileResponse.data,
+					quests: questResponse.data.quests,
+				}
+				updatePlayerData(data)
 				setStatus('Player data updated successfully.', 'success')
 				form.reset()
 			} catch (error) {
