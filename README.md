@@ -7,7 +7,7 @@ Website for the mmo runescape game mode group ironman. Project deployed on [Verc
 1. Clone the repository:
 
    ```nodejs
-    git clone https://github.com/Endeyr/nextjs-template
+    git clone https://github.com/Endeyr/rs3-gim
    ```
 
 2. Install dependencies:
