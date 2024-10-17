@@ -112,6 +112,14 @@ const XpTable: React.FC<XpTableI> = ({ playerData }) => {
 							</TableCell>
 						</TableRow>
 					))}
+					<TableRow>
+						<TableCell>Quest Completed</TableCell>
+						<TableCell></TableCell>
+						<TableCell className="text-right">
+							{playerData.questscomplete}
+						</TableCell>
+						<TableCell></TableCell>
+					</TableRow>
 				</TableBody>
 			</Table>
 		</>

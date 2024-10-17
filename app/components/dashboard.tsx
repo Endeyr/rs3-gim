@@ -29,7 +29,7 @@ const Dashboard = () => {
 	const dynamicClasses =
 		playerDataArray.length >= 5
 			? 'md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5'
-			: playerDataArray.length === 3
+			: playerDataArray.length < 5 && playerDataArray.length >= 3
 			? 'md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
 			: playerDataArray.length === 2
 			? 'md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3'
