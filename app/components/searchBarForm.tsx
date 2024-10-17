@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { isPlayerOutOfDate } from '@/lib/utils'
-import { formSchema } from '@/schemas/searchBarFormSchema'
+import { searchBarFormSchema } from '@/schemas/searchBarFormSchema'
 import { PlayerContextI } from '@/types/context'
 import { zodResolver } from '@hookform/resolvers/zod'
 import axios from 'axios'
@@ -32,14 +32,14 @@ const SearchBarForm: React.FC = () => {
 		isSuccess,
 	} = useContext(PlayerContext) as PlayerContextI
 
-	const form = useForm<z.infer<typeof formSchema>>({
-		resolver: zodResolver(formSchema),
+	const form = useForm<z.infer<typeof searchBarFormSchema>>({
+		resolver: zodResolver(searchBarFormSchema),
 		defaultValues: {
 			name: '',
 		},
 	})
 
-	const onSubmit = async (values: z.infer<typeof formSchema>) => {
+	const onSubmit = async (values: z.infer<typeof searchBarFormSchema>) => {
 		updateIsLoading(true)
 		setStatus('', 'reset')
 
