@@ -181,29 +181,49 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
 			const existingPlayerIndex = prevData.findIndex(
 				(player) => player.name === newMonthlyData.name
 			)
-
-			const isDataUpdated =
-				existingPlayerIndex !== -1 &&
-				JSON.stringify(prevData[existingPlayerIndex]) ===
-					JSON.stringify(newMonthlyData)
-			if (isDataUpdated) return prevData
-
-			const updatedData =
-				existingPlayerIndex !== -1
-					? [
-							...prevData.slice(0, existingPlayerIndex),
-							newMonthlyData,
-							...prevData.slice(existingPlayerIndex + 1),
-					  ]
-					: [...prevData, newMonthlyData]
-
-			try {
-				localStorage.setItem(`monthlyXpDataArray`, JSON.stringify(updatedData))
-			} catch (error) {
-				console.error(`Failed to update localStorage: ${error}`)
+			const existingPlayer = prevData[existingPlayerIndex]
+			if (existingPlayer) {
+				const updatedSkills = [...existingPlayer.monthlyXpGain]
+				newMonthlyData.monthlyXpGain.forEach((newSkillData) => {
+					const existingSkillIndex = updatedSkills.findIndex(
+						(skill) => skill.skillName === newSkillData.skillName
+					)
+					if (existingSkillIndex !== -1) {
+						updatedSkills[existingSkillIndex] = newSkillData
+					} else {
+						updatedSkills.push(newSkillData)
+					}
+				})
+				const updatedPlayer = {
+					...existingPlayer,
+					monthlyXpGain: updatedSkills,
+				}
+				const updatedData = [
+					...prevData.slice(0, existingPlayerIndex),
+					updatedPlayer,
+					...prevData.slice(existingPlayerIndex + 1),
+				]
+				try {
+					localStorage.setItem(
+						'monthlyXpDataArray',
+						JSON.stringify(updatedData)
+					)
+				} catch (error) {
+					console.error(`Failed to update localStorage: ${error}`)
+				}
+				return updatedData
+			} else {
+				const updatedData = [...prevData, newMonthlyData]
+				try {
+					localStorage.setItem(
+						'monthlyXpDataArray',
+						JSON.stringify(updatedData)
+					)
+				} catch (error) {
+					console.error(`Failed to update localStorage: ${error}`)
+				}
+				return updatedData
 			}
-
-			return updatedData
 		})
 	}, [])
 

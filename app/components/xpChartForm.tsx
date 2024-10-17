@@ -17,6 +17,7 @@ import {
 	SelectValue,
 } from '@/components/ui/select'
 import { runemetrics } from '@/lib/const'
+import { isSkillOutOfDate } from '@/lib/utils'
 import { xpChartFormSchema } from '@/schemas/xpChartFormSchema'
 import { PlayerContextI } from '@/types/context'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -31,8 +32,16 @@ interface XpChartFormPropsI {
 }
 
 const XpChartForm = ({ username }: XpChartFormPropsI) => {
-	const { updateIsLoading, setStatus, isLoading, isError, message, isSuccess } =
-		useContext(PlayerContext) as PlayerContextI
+	const {
+		updateIsLoading,
+		setStatus,
+		isLoading,
+		isError,
+		message,
+		isSuccess,
+		monthlyXpDataArray,
+		updateMonthlyXpData,
+	} = useContext(PlayerContext) as PlayerContextI
 
 	const form = useForm<z.infer<typeof xpChartFormSchema>>({
 		resolver: zodResolver(xpChartFormSchema),
@@ -42,25 +51,29 @@ const XpChartForm = ({ username }: XpChartFormPropsI) => {
 	})
 
 	const onSubmit = async (values: z.infer<typeof xpChartFormSchema>) => {
-		// separate loading state for each component vs whole loading screen?
 		updateIsLoading(true)
 		setStatus('', 'reset')
+		const existingPlayerXpData = monthlyXpDataArray.find(
+			(player) => player.name === username
+		)
+		const existingSkillData = existingPlayerXpData?.monthlyXpGain.find(
+			(skill) => skill.skillName === values.skillName
+		)
 
-		// check if existing
-		// const existingPlayer = undefined
-		// check if out of date
-		const isOutOfDate = true
+		// TODO add timestamp check before updating data
+		const isOutOfDate =
+			!existingSkillData || isSkillOutOfDate(existingSkillData)
 
 		if (isOutOfDate) {
 			try {
 				const monthlyXpResponse = await axios(
-					`/api/runemetrics/getMonthlyXp?name=${username}&skillId=${values.skillName}`
+					`/api/runemetrics/getMonthlyXp?name=${encodeURIComponent(
+						username
+					)}&skillId=${encodeURIComponent(values.skillName)}`
 				)
-				// update Xp Chart Data
-				console.log(monthlyXpResponse.data)
-
-				// only update when new month by timestamp?
-				setStatus('Player data updated successfully.', 'success')
+				const data = monthlyXpResponse.data
+				updateMonthlyXpData(data)
+				setStatus('Player Skill data updated successfully.', 'success')
 				form.reset()
 			} catch (error) {
 				if (axios.isAxiosError(error)) {
