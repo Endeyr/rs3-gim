@@ -3,9 +3,9 @@
 import { PlayerContextI } from '@/types/context'
 import { PlayerDataI } from '@/types/playerData'
 import { useContext, useEffect } from 'react'
+import SearchBar from '../components/searchBar'
+import XpTable from '../components/xpTable'
 import { PlayerContext } from '../context/playerContext'
-import SearchBar from './searchBar'
-import XpTable from './xpTable'
 
 const Dashboard = () => {
 	const { playerDataArray, updatePlayerDataArray } = useContext(
