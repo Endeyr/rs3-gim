@@ -15,8 +15,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: 'RS3 GIM Dashboard',
-  description: 'A dashboard for the runescape game mode, group ironman.',
+  title: 'RS3 Dashboard',
+  description: 'A dashboard for the game Runescape',
 };
 
 export default function RootLayout({
