@@ -50,7 +50,7 @@ The development dependencies include tools and libraries to aid in development:
 - TypeScript: A typed superset of JavaScript that compiles to plain JavaScript.
 - ESLint: A tool for identifying and fixing problems in JavaScript code.
 - Jest: A testing framework for JavaScript and TypeScript.
-- Testing Library: A family of libraries to test UI components. 
+- Testing Library: A family of libraries to test UI components.
 
 ## Project Structure
 

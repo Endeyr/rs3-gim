@@ -1,21 +1,21 @@
 export interface MonthDataI {
-	rank: number
-	timestamp: number
-	xpGain: number
+  rank: number;
+  timestamp: number;
+  xpGain: number;
 }
 
 export interface MonthlyXpGainI {
-	averageXpGain: number
-	monthData: MonthDataI[]
-	skillId: number
-	skillName: string
-	timestamp: string
-	totalGain: number
-	totalXp: number
+  averageXpGain: number;
+  monthData: MonthDataI[];
+  skillId: number;
+  skillName: string;
+  timestamp: string;
+  totalGain: number;
+  totalXp: number;
 }
 
 export interface MonthlyXpI {
-	monthlyXpGain: MonthlyXpGainI[]
-	loggedIn: 'false' | 'true'
-	name: string
+  monthlyXpGain: MonthlyXpGainI[];
+  loggedIn: 'false' | 'true';
+  name: string;
 }

@@ -1,6 +1,6 @@
-import type { PlayerDataI } from './playerData'
+import type { PlayerDataI } from './playerData';
 
 export interface XPTablePropsI {
-	playerData: PlayerDataI
-	username: string
+  playerData: PlayerDataI;
+  username: string;
 }

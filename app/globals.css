@@ -3,77 +3,77 @@
 @tailwind utilities;
 
 body {
-	font-family: Arial, Helvetica, sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 @layer utilities {
-	.text-balance {
-		text-wrap: balance;
-	}
+  .text-balance {
+    text-wrap: balance;
+  }
 }
 
 /* Daylight */
 @layer base {
-	:root {
-		--background: 36 39% 88%;
-		--foreground: 36 45% 15%;
-		--primary: 36 45% 70%;
-		--primary-foreground: 36 45% 11%;
-		--secondary: 40 35% 77%;
-		--secondary-foreground: 36 45% 25%;
-		--accent: 36 64% 57%;
-		--accent-foreground: 36 72% 17%;
-		--destructive: 0 84% 37%;
-		--destructive-foreground: 0 0% 98%;
-		--muted: 36 33% 75%;
-		--muted-foreground: 36 45% 25%;
-		--card: 36 46% 82%;
-		--card-foreground: 36 45% 20%;
-		--popover: 0 0% 100%;
-		--popover-foreground: 240 10% 3.9%;
-		--border: 36 45% 60%;
-		--input: 36 45% 60%;
-		--ring: 36 45% 30%;
-		--chart-1: 15 80% 45%; /* orange */
-		--chart-2: 210 60% 50%; /* blue */
-		--chart-3: 140 50% 45%; /* green */
-		--chart-4: 45 80% 55%; /* yellow */
-		--chart-5: 270 60% 50%; /* purple */
-		--radius: 0.5rem;
-	}
-	.dark {
-		--background: 240 5% 6%;
-		--foreground: 60 5% 90%;
-		--primary: 240 0% 90%;
-		--primary-foreground: 60 0% 0%;
-		--secondary: 240 4% 15%;
-		--secondary-foreground: 60 5% 85%;
-		--accent: 240 0% 13%;
-		--accent-foreground: 60 0% 100%;
-		--destructive: 0 60% 50%;
-		--destructive-foreground: 0 0% 98%;
-		--muted: 240 5% 25%;
-		--muted-foreground: 60 5% 85%;
-		--card: 240 4% 10%;
-		--card-foreground: 60 5% 90%;
-		--popover: 240 5% 15%;
-		--popover-foreground: 60 5% 85%;
-		--border: 240 6% 20%;
-		--input: 240 6% 20%;
-		--ring: 240 5% 90%;
-		--chart-1: 360 70% 60%; /* red */
-		--chart-2: 220 80% 55%; /* blue */
-		--chart-3: 140 70% 45%; /* teal/green */
-		--chart-4: 50 90% 60%; /* yellow */
-		--chart-5: 280 70% 65%; /* purple */
-	}
+  :root {
+    --background: 36 39% 88%;
+    --foreground: 36 45% 15%;
+    --primary: 36 45% 70%;
+    --primary-foreground: 36 45% 11%;
+    --secondary: 40 35% 77%;
+    --secondary-foreground: 36 45% 25%;
+    --accent: 36 64% 57%;
+    --accent-foreground: 36 72% 17%;
+    --destructive: 0 84% 37%;
+    --destructive-foreground: 0 0% 98%;
+    --muted: 36 33% 75%;
+    --muted-foreground: 36 45% 25%;
+    --card: 36 46% 82%;
+    --card-foreground: 36 45% 20%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --border: 36 45% 60%;
+    --input: 36 45% 60%;
+    --ring: 36 45% 30%;
+    --chart-1: 15 80% 45%; /* orange */
+    --chart-2: 210 60% 50%; /* blue */
+    --chart-3: 140 50% 45%; /* green */
+    --chart-4: 45 80% 55%; /* yellow */
+    --chart-5: 270 60% 50%; /* purple */
+    --radius: 0.5rem;
+  }
+  .dark {
+    --background: 240 5% 6%;
+    --foreground: 60 5% 90%;
+    --primary: 240 0% 90%;
+    --primary-foreground: 60 0% 0%;
+    --secondary: 240 4% 15%;
+    --secondary-foreground: 60 5% 85%;
+    --accent: 240 0% 13%;
+    --accent-foreground: 60 0% 100%;
+    --destructive: 0 60% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --muted: 240 5% 25%;
+    --muted-foreground: 60 5% 85%;
+    --card: 240 4% 10%;
+    --card-foreground: 60 5% 90%;
+    --popover: 240 5% 15%;
+    --popover-foreground: 60 5% 85%;
+    --border: 240 6% 20%;
+    --input: 240 6% 20%;
+    --ring: 240 5% 90%;
+    --chart-1: 360 70% 60%; /* red */
+    --chart-2: 220 80% 55%; /* blue */
+    --chart-3: 140 70% 45%; /* teal/green */
+    --chart-4: 50 90% 60%; /* yellow */
+    --chart-5: 280 70% 65%; /* purple */
+  }
 }
 
 @layer base {
-	* {
-		@apply border-border;
-	}
-	body {
-		@apply bg-background text-foreground;
-	}
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }

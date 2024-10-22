@@ -1,45 +1,45 @@
-import type { PlayerDataI } from '@/types/playerData'
-import type { MonthlyXpGainI } from '@/types/xpData'
-import { clsx, type ClassValue } from 'clsx'
-import { twMerge } from 'tailwind-merge'
-import { MAX_AGE } from './const'
+import type { PlayerDataI } from '@/types/playerData';
+import type { MonthlyXpGainI } from '@/types/xpData';
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+import { MAX_AGE } from './const';
 
 export function cn(...inputs: ClassValue[]) {
-	return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
 export const capitalizeFirstLetter = (str: string) => {
-	return str.charAt(0).toUpperCase() + str.slice(1)
-}
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
 
 export const isPlayerOutOfDate = (playerData: PlayerDataI): boolean => {
-	const timeDifference = Date.now() - new Date(playerData.timestamp).getTime()
+  const timeDifference = Date.now() - new Date(playerData.timestamp).getTime();
 
-	return timeDifference > MAX_AGE
-}
+  return timeDifference > MAX_AGE;
+};
 
 export const isSkillOutOfDate = (
-	existingSkillData: MonthlyXpGainI
+  existingSkillData: MonthlyXpGainI
 ): boolean => {
-	const timeDifference =
-		Date.now() - new Date(existingSkillData.timestamp).getTime()
-	return timeDifference > MAX_AGE
-}
+  const timeDifference =
+    Date.now() - new Date(existingSkillData.timestamp).getTime();
+  return timeDifference > MAX_AGE;
+};
 
 export interface FormattedChartDataI {
-	skillName: string
+  skillName: string;
 }
 
 export const formatChartData = (
-	chartData: MonthlyXpGainI[]
+  chartData: MonthlyXpGainI[]
 ): FormattedChartDataI[] => {
-	const formattedChartData: FormattedChartDataI[] = []
-	chartData.map((data) => {
-		const newObj = {
-			...data,
-		}
-		formattedChartData.push(newObj)
-	})
+  const formattedChartData: FormattedChartDataI[] = [];
+  chartData.map((data) => {
+    const newObj = {
+      ...data,
+    };
+    formattedChartData.push(newObj);
+  });
 
-	return formattedChartData
-}
+  return formattedChartData;
+};

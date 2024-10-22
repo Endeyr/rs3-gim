@@ -1,24 +1,24 @@
-import { twMerge } from 'tailwind-merge'
+import { twMerge } from 'tailwind-merge';
 
-type ContainerProps = React.HTMLAttributes<HTMLDivElement>
+type ContainerProps = React.HTMLAttributes<HTMLDivElement>;
 
 const Container: React.FC<ContainerProps> = ({
-	className,
-	children,
-	...props
+  className,
+  children,
+  ...props
 }) => {
-	const baseClasses: string =
-		'space-y-10 md:space-y-16 flex w-full xl:min-h-[calc(100dvh-100px)] items-center justify-center p-[50px]'
+  const baseClasses: string =
+    'space-y-10 md:space-y-16 flex w-full xl:min-h-[calc(100dvh-100px)] items-center justify-center p-[50px]';
 
-	const mergedClasses: string = twMerge([baseClasses, className])
-	return (
-		<>
-			{/* Content Container */}
-			<div className={mergedClasses} {...props}>
-				{/* Content Section */}
-				{children}
-			</div>
-		</>
-	)
-}
-export default Container
+  const mergedClasses: string = twMerge([baseClasses, className]);
+  return (
+    <>
+      {/* Content Container */}
+      <div className={mergedClasses} {...props}>
+        {/* Content Section */}
+        {children}
+      </div>
+    </>
+  );
+};
+export default Container;
