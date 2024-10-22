@@ -81,7 +81,6 @@ const ProfilePage = ({ params }: ProfilePagePropsI) => {
 				<XpTable playerData={userData} />
 			</div>
 			<div className="lg:col-span-2 col-span-1 px-2 justify-center items-start h-full w-[98%] space-y-4 space-x-2">
-				<XpChartForm username={userData.name} />
 				{userXpData ? (
 					<XpChart
 						chartData={userXpData.monthlyXpGain}
@@ -94,6 +93,7 @@ const ProfilePage = ({ params }: ProfilePagePropsI) => {
 				) : (
 					<div>Select a skill to get started.</div>
 				)}
+				<XpChartForm username={userData.name} />
 			</div>
 		</div>
 	)
