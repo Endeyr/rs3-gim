@@ -4,6 +4,7 @@ import XpChart from '@/app/components/xpChart'
 import XpChartForm from '@/app/components/xpChartForm'
 import XpTable from '@/app/components/xpTable'
 import { PlayerContext } from '@/app/context/playerContext'
+import Container from '@/components/layout/container'
 import type { ChartConfig } from '@/components/ui/chart'
 import { CHART_COLORS, MONTH_NAMES } from '@/lib/const'
 import type { PlayerContextI } from '@/types/context'
@@ -76,7 +77,7 @@ const ProfilePage = ({ params }: ProfilePagePropsI) => {
 	if (!userData) return <div>PlayerData not found</div>
 
 	return (
-		<div className="grid grid-cols-1 lg:grid-cols-3 w-full space-x-2 space-y-4">
+		<Container className="grid grid-cols-1 lg:grid-cols-3 space-x-2">
 			<div className="col-span-1 px-2">
 				<XpTable playerData={userData} />
 			</div>
@@ -95,7 +96,7 @@ const ProfilePage = ({ params }: ProfilePagePropsI) => {
 				)}
 				<XpChartForm username={userData.name} />
 			</div>
-		</div>
+		</Container>
 	)
 }
 export default ProfilePage

@@ -1,5 +1,6 @@
 'use client'
 
+import Container from '@/components/layout/container'
 import { PlayerContextI } from '@/types/context'
 import { PlayerDataI } from '@/types/playerData'
 import { useContext, useEffect } from 'react'
@@ -38,7 +39,7 @@ const Dashboard = () => {
 			: 'md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1'
 
 	return (
-		<div className="space-y-8">
+		<Container>
 			<ul className={`grid grid-cols-1 gap-4 ${dynamicClasses}`}>
 				{playerDataArray.length === 0 ? (
 					<li>No players found. Please add some players.</li>
@@ -53,7 +54,7 @@ const Dashboard = () => {
 					<SearchBar />
 				</li>
 			</ul>
-		</div>
+		</Container>
 	)
 }
 

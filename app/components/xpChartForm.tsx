@@ -107,6 +107,7 @@ const XpChartForm = ({ username }: XpChartFormPropsI) => {
 					className="space-y-4 w-full flex flex-col justify-evenly items-center"
 					aria-busy={isLoading}
 					aria-live="polite"
+					id="xp-chart-form"
 				>
 					<fieldset
 						disabled={isLoading}
@@ -124,6 +125,7 @@ const XpChartForm = ({ username }: XpChartFormPropsI) => {
 									<FormLabel>Skill</FormLabel>
 									<FormControl>
 										<Select
+											name="skillName"
 											onValueChange={field.onChange}
 											value={field.value}
 											disabled={isLoading}
