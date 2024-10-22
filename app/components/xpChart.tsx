@@ -16,52 +16,25 @@ import {
 	ChartTooltip,
 	ChartTooltipContent,
 } from '@/components/ui/chart'
+import { CHART_COLORS } from '@/lib/const'
+import type { MonthlyXpGainI } from '@/types/xpData'
 import { useMemo } from 'react'
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 
-export const description = 'An area chart with axes'
-
-export const exampleChartData = [
-	{ month: 'January', desktop: 186, mobile: 80 },
-	{ month: 'February', desktop: 305, mobile: 200 },
-	{ month: 'March', desktop: 237, mobile: 120 },
-	{ month: 'April', desktop: 73, mobile: 190 },
-	{ month: 'May', desktop: 209, mobile: 130 },
-	{ month: 'June', desktop: 214, mobile: 140 },
-]
-
-export const exampleChartConfig = {
-	desktop: {
-		label: 'Desktop',
-		color: 'hsl(var(--chart-1))',
-	},
-	mobile: {
-		label: 'Mobile',
-		color: 'hsl(var(--chart-2))',
-	},
-} satisfies ChartConfig
-
 export interface XpChartPropsI {
-	chartData: {
-		month: string
-		desktop: number
-		mobile: number
-	}[]
+	chartData: MonthlyXpGainI[]
 
-	chartConfig: {
-		desktop: {
-			label: string
-			color: string
-		}
-		mobile: {
-			label: string
-			color: string
-		}
-	}
+	chartConfig: ChartConfig
 	chartTitle: string
 	chartDescription: string
 	chartFooterDescription: string
 	chartFooterDate: string
+}
+
+export interface ProcessedMonthDataI {
+	month: string
+	timestamp: number
+	[key: string]: string | number
 }
 
 const XpChart = ({
@@ -72,8 +45,38 @@ const XpChart = ({
 	chartFooterDescription,
 	chartFooterDate,
 }: XpChartPropsI) => {
-	const memoizedChartData = useMemo(() => chartData, [chartData])
+	const { processedData, skillNames } = useMemo(() => {
+		const skills = chartData.map((skill) => skill.skillName)
+		const data = chartData.reduce<ProcessedMonthDataI[]>((acc, skill) => {
+			skill.monthData.forEach((month, index) => {
+				const date = new Date(month.timestamp)
+				const monthStr = date.toLocaleString('default', { month: 'short' })
+
+				if (!acc[index]) {
+					acc[index] = {
+						month: monthStr,
+						timestamp: month.timestamp,
+					}
+				}
+
+				acc[index][skill.skillName] = month.xpGain
+			})
+			return acc
+		}, [])
+
+		return {
+			processedData: data,
+			skillNames: skills,
+		}
+	}, [chartData])
+
 	const memoizedChartConfig = useMemo(() => chartConfig, [chartConfig])
+
+	const formatYAxis = (value: number): string => {
+		if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`
+		if (value >= 1000) return `${(value / 1000).toFixed(1)}K`
+		return value.toString()
+	}
 
 	return (
 		<Card>
@@ -83,19 +86,16 @@ const XpChart = ({
 			</CardHeader>
 			<CardContent>
 				<ChartContainer
-					className="min-h-[200px] w-full"
+					className="min-h-[300px] w-full"
 					config={memoizedChartConfig}
 				>
 					<AreaChart
 						accessibilityLayer
-						data={memoizedChartData}
-						margin={{
-							left: -20,
-							right: 12,
-						}}
+						data={processedData}
+						margin={{ right: 12, left: 12 }}
 						aria-labelledby="chart-description"
 					>
-						<CartesianGrid vertical={false} />
+						<CartesianGrid strokeDasharray="3 3" vertical={false} />
 						<XAxis
 							dataKey="month"
 							tickLine={false}
@@ -108,25 +108,29 @@ const XpChart = ({
 							axisLine={false}
 							tickMargin={8}
 							tickCount={3}
+							tickFormatter={formatYAxis}
 						/>
-						<ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+						<ChartTooltip
+							cursor={false}
+							content={
+								<ChartTooltipContent
+									indicator="dot"
+									className="w-full max-w-[90vw] md:max-w-[600px]"
+								/>
+							}
+						/>
 						<ChartLegend content={<ChartLegendContent />} />
-						<Area
-							dataKey="mobile"
-							type="natural"
-							fill="var(--color-mobile)"
-							fillOpacity={0.4}
-							stroke="var(--color-mobile)"
-							stackId="a"
-						/>
-						<Area
-							dataKey="desktop"
-							type="natural"
-							fill="var(--color-desktop)"
-							fillOpacity={0.4}
-							stroke="var(--color-desktop)"
-							stackId="a"
-						/>
+						{skillNames.map((skillName, index) => (
+							<Area
+								key={skillName}
+								dataKey={skillName}
+								type="monotone"
+								fill={CHART_COLORS[index % CHART_COLORS.length]}
+								fillOpacity={0.4}
+								stroke={CHART_COLORS[index % CHART_COLORS.length]}
+								stackId="1"
+							/>
+						))}
 					</AreaChart>
 				</ChartContainer>
 			</CardContent>

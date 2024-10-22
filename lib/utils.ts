@@ -25,3 +25,21 @@ export const isSkillOutOfDate = (
 		Date.now() - new Date(existingSkillData.timestamp).getTime()
 	return timeDifference > MAX_AGE
 }
+
+export interface FormattedChartDataI {
+	skillName: string
+}
+
+export const formatChartData = (
+	chartData: MonthlyXpGainI[]
+): FormattedChartDataI[] => {
+	const formattedChartData: FormattedChartDataI[] = []
+	chartData.map((data) => {
+		const newObj = {
+			...data,
+		}
+		formattedChartData.push(newObj)
+	})
+
+	return formattedChartData
+}

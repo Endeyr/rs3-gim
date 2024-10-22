@@ -5,6 +5,29 @@ import type {
 	ProfileSkills,
 } from '@/types/api'
 
+export const CHART_COLORS = [
+	'hsl(var(--chart-1))',
+	'hsl(var(--chart-2))',
+	'hsl(var(--chart-3))',
+	'hsl(var(--chart-4))',
+	'hsl(var(--chart-5))',
+] as const
+
+export const MONTH_NAMES = [
+	'Jan',
+	'Feb',
+	'Mar',
+	'Apr',
+	'May',
+	'June',
+	'July',
+	'Aug',
+	'Sep',
+	'Oct',
+	'Nov',
+	'Dec',
+] as const
+
 export const MAX_AGE = 60 * 60 * 1000 // 1 hour
 
 export const runemetrics = {

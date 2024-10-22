@@ -1,16 +1,15 @@
 export interface MonthDataI {
 	rank: number
-	timestamp: Date
+	timestamp: number
 	xpGain: number
 }
 
 export interface MonthlyXpGainI {
 	averageXpGain: number
 	monthData: MonthDataI[]
-	name: string
 	skillId: number
 	skillName: string
-	timestamp: Date
+	timestamp: string
 	totalGain: number
 	totalXp: number
 }
