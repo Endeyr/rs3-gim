@@ -3,7 +3,7 @@ import SearchBarForm from './searchBarForm'
 const SearchBar = () => {
 	return (
 		<>
-			<h3>Search by Name</h3>
+			<h3>Add to Dashboard</h3>
 			<SearchBarForm />
 		</>
 	)

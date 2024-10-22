@@ -137,7 +137,7 @@ const SearchBarForm: React.FC = () => {
 					</fieldset>
 					<div className="w-full">
 						<Button type="submit" disabled={isLoading}>
-							{!isLoading ? 'Search' : 'Loading...'}
+							{!isLoading ? 'Add' : 'Loading...'}
 						</Button>
 					</div>
 				</form>
