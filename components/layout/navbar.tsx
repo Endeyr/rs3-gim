@@ -10,7 +10,7 @@ const Navbar = () => {
 						<div className="flex items-center justify-start gap-4">
 							<Link
 								href="/"
-								className="inline-flex h-10 items-center justify-center text-lg font-bold text-gray-800 dark:text-white hover:text-[#4078c8]"
+								className="inline-flex h-10 items-center justify-center text-lg font-bold text-gray-800 dark:text-white hover:text-[#4078c8] dark:hover:text-[#4078c8]"
 							>
 								Home
 							</Link>
@@ -20,25 +20,25 @@ const Navbar = () => {
 							<nav className="flex items-center space-x-1 gap-4">
 								<Link
 									href="/services"
-									className="h-10 w-full p-2 text-gray-800 hover:text-[#4078c8] dark:text-white rm-text-shadow"
+									className="h-10 w-full p-2 text-gray-800 hover:text-[#4078c8] dark:text-white dark:hover:text-[#4078c8] rm-text-shadow"
 								>
 									Services
 								</Link>
 								<Link
 									href="/about"
-									className="h-10 w-full p-2 text-gray-800 hover:text-[#4078c8] dark:text-white rm-text-shadow"
+									className="h-10 w-full p-2 text-gray-800 hover:text-[#4078c8] dark:text-white dark:hover:text-[#4078c8] rm-text-shadow"
 								>
 									About
 								</Link>
 								<Link
 									href="/contact"
-									className="h-10 w-full p-2 text-gray-800 hover:text-[#4078c8] dark:text-white rm-text-shadow"
+									className="h-10 w-full p-2 text-gray-800 hover:text-[#4078c8] dark:text-white dark:hover:text-[#4078c8] rm-text-shadow"
 								>
 									Contact
 								</Link>
 								<Link
 									href="/dashboard"
-									className="h-10 w-full p-2 text-gray-800 hover:text-[#4078c8] dark:text-white rm-text-shadow"
+									className="h-10 w-full p-2 text-gray-800 hover:text-[#4078c8] dark:text-white dark:hover:text-[#4078c8] rm-text-shadow"
 								>
 									Dashboard
 								</Link>

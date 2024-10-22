@@ -16,7 +16,7 @@ const Footer = () => {
 					<li>
 						<Link
 							href="/"
-							className="w-full text-gray-800 hover:text-[#4078c8] dark:text-white"
+							className="w-full text-gray-800 hover:text-[#4078c8] dark:hover:text-[#4078c8] dark:text-white"
 						>
 							Home
 						</Link>
@@ -24,7 +24,7 @@ const Footer = () => {
 					<li>
 						<Link
 							href="/services"
-							className="w-full text-gray-800 hover:text-[#4078c8] dark:text-white"
+							className="w-full text-gray-800 hover:text-[#4078c8] dark:hover:text-[#4078c8] dark:text-white"
 						>
 							Services
 						</Link>
@@ -32,7 +32,7 @@ const Footer = () => {
 					<li>
 						<Link
 							href="/about"
-							className="w-full text-gray-800 hover:text-[#4078c8] dark:text-white"
+							className="w-full text-gray-800 hover:text-[#4078c8] dark:hover:text-[#4078c8] dark:text-white"
 						>
 							About
 						</Link>
@@ -40,7 +40,7 @@ const Footer = () => {
 					<li>
 						<Link
 							href="/contact"
-							className="w-full text-gray-800 hover:text-[#4078c8] dark:text-white"
+							className="w-full text-gray-800 hover:text-[#4078c8] dark:hover:text-[#4078c8] dark:text-white"
 						>
 							Contact
 						</Link>
@@ -48,7 +48,7 @@ const Footer = () => {
 					<li>
 						<Link
 							href="/dashboard"
-							className="w-full text-gray-800 hover:text-[#4078c8] dark:text-white"
+							className="w-full text-gray-800 hover:text-[#4078c8] dark:hover:text-[#4078c8] dark:text-white"
 						>
 							Dashboard
 						</Link>
