@@ -1,9 +1,9 @@
-import Dashboard from './components/dashboard'
+import Hero from './components/home/hero'
 
 export default function Home() {
 	return (
 		<>
-			<Dashboard />
+			<Hero />
 		</>
 	)
 }
