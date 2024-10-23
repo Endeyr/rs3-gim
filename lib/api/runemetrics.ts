@@ -61,9 +61,10 @@ export const getMonthlyXpData = async (
   skillId: number
 ): Promise<MonthlyExperience | null> => {
   try {
+    const parsedName = name.replace(/ /g, '_')
     const url = `${
       runemetrics.endpoints['monthlyXp']
-    }?searchName=${encodeURIComponent(name)}&skillid=${skillId}`;
+    }?searchName=${parsedName}&skillid=${skillId}`;
     const response = await axios.get(url, { timeout: 60000 });
     const data = response.data;
     if (!data || typeof data === 'string') {
