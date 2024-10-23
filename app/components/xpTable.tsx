@@ -41,7 +41,7 @@ const XpTable: React.FC<XpTableI> = ({ playerData }) => {
         role='group'
         aria-labelledby='player-actions'
       >
-        {pathname !== `/profile/${playerData.name}` ? (
+        {pathname !== `/profile/${encodeURIComponent(playerData.name)}` ? (
           <>
             <Link className='w-full' href={`profile/${playerData.name}`}>
               <Button

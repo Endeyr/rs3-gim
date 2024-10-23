@@ -25,10 +25,11 @@ const ProfilePage = ({ params }: ProfilePagePropsI) => {
   const { userData, filteredXpData, chartConfig, chartDescription } =
     useMemo(() => {
       const userData = playerDataArray.find(
-        (player) => player.name === username
+        (player) => player.name === decodeURIComponent(username)
       );
+
       const userXpData = monthlyXpDataArray.find(
-        (player) => player.name === username
+        (player) => player.name === decodeURIComponent(username)
       );
 
       if (!userXpData) {
@@ -64,29 +65,29 @@ const ProfilePage = ({ params }: ProfilePagePropsI) => {
       };
     }, [playerDataArray, monthlyXpDataArray, username, selectedSkills]);
 
-  if (!userData) return <div>PlayerData not found</div>;
-
   return (
-    <Container className='grid grid-cols-1 space-x-2 lg:grid-cols-3'>
-      <div className='col-span-1 px-2'>
-        <XpTable playerData={userData} />
-      </div>
-      <div className='col-span-1 h-full w-[98%] items-start justify-center space-x-2 space-y-4 px-2 lg:col-span-2'>
-        <div className='mx-2 flex w-full justify-start'>
-          <XpChartCheckbox setSelectedSkills={setSelectedSkills} />
-        </div>
-        {filteredXpData.length > 0 ? (
-          <XpChart
-            chartData={filteredXpData}
-            chartConfig={chartConfig}
-            chartDescription={chartDescription}
-            chartTitle={`Xp for ${userData.name}`}
-            chartFooterDescription='XP Gained'
-          />
-        ) : (
-          <div>Select a skill to get started.</div>
-        )}
-      </div>
+    <Container className='grid grid-cols-1 space-x-2 xl:grid-cols-3'>
+      {userData && (
+        <>
+          <div className='col-span-1 w-full px-2'>
+            <XpTable playerData={userData} />
+          </div>
+          <div className='col-span-1 h-full w-[98%] items-start justify-center space-x-2 space-y-4 px-2 lg:col-span-2'>
+            <div className='mx-2 flex w-full justify-start'>
+              <XpChartCheckbox setSelectedSkills={setSelectedSkills} />
+            </div>
+            {filteredXpData.length > 0 && (
+              <XpChart
+                chartData={filteredXpData}
+                chartConfig={chartConfig}
+                chartDescription={chartDescription}
+                chartTitle={`Xp for ${userData.name}`}
+                chartFooterDescription='XP Gained'
+              />
+            )}
+          </div>
+        </>
+      )}
     </Container>
   );
 };
