@@ -64,39 +64,41 @@ const SearchBarForm: React.FC = () => {
           )
         );
 
-        const [profileResponse, questResponse, ...monthlyXpResponses] =
-          await Promise.all([
-            axios(
-              `/api/runemetrics/getProfile?name=${encodeURIComponent(
-                values.name
-              )}`,
-              {
-                timeout: 60000,
-              }
-            ),
-            axios(
-              `/api/runemetrics/getQuest?name=${encodeURIComponent(values.name)}`,
-              {
-                timeout: 60000,
-              }
-            ),
-            ...skillXpRequests,
-          ]);
+        const [profileResponse, questResponse] = await Promise.all([
+          axios(
+            `/api/runemetrics/getProfile?name=${encodeURIComponent(
+              values.name
+            )}`,
+            {
+              timeout: 60000,
+            }
+          ),
+          axios(
+            `/api/runemetrics/getQuest?name=${encodeURIComponent(values.name)}`,
+            {
+              timeout: 60000,
+            }
+          ),
+        ]);
+
+        if (profileResponse.status === 200 && questResponse.status === 200) {
+          const data = {
+            ...profileResponse.data,
+            quests: questResponse.data.quests,
+          };
+          updatePlayerData(data);
+        }
+
+        const [...monthlyXpResponses] = await Promise.all([...skillXpRequests]);
 
         monthlyXpResponses.forEach((response) => {
-          updateMonthlyXpData(response.data);
+          if (response.status === 200) updateMonthlyXpData(response.data);
         });
 
-        const data = {
-          ...profileResponse.data,
-          quests: questResponse.data.quests,
-        };
-        updatePlayerData(data);
         setStatus('Player data updated successfully.', 'success');
         form.reset();
       } catch (error) {
         if (axios.isAxiosError(error)) {
-          console.log(error);
           setStatus(
             error.response?.status === 500
               ? 'Runescape api unavailable, please try again later'
@@ -107,7 +109,6 @@ const SearchBarForm: React.FC = () => {
           );
         } else {
           setStatus(`An unexpected error occurred; ${error}`, 'error');
-          console.error(`Unexpected error: ${error}`);
         }
       } finally {
         updateIsLoading(false);
