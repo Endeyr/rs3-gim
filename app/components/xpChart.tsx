@@ -86,7 +86,7 @@ const XpChart = ({
       </CardHeader>
       <CardContent>
         <ChartContainer
-          className='min-h-[300px] w-full'
+          className='h-[80dvh] min-h-[600px] w-full'
           config={memoizedChartConfig}
         >
           <AreaChart
@@ -119,7 +119,11 @@ const XpChart = ({
                 />
               }
             />
-            <ChartLegend content={<ChartLegendContent />} />
+            <ChartLegend
+              content={
+                <ChartLegendContent className='grid h-full w-full grid-cols-6' />
+              }
+            />
             {skillNames.map((skillName, index) => (
               <Area
                 key={skillName}
