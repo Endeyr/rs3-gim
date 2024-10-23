@@ -10,6 +10,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { runemetrics } from '@/lib/const';
 import { isPlayerOutOfDate } from '@/lib/utils';
 import { searchBarFormSchema } from '@/schemas/searchBarFormSchema';
 import { PlayerContextI } from '@/types/context';
@@ -30,6 +31,7 @@ const SearchBarForm: React.FC = () => {
     isError,
     message,
     isSuccess,
+    updateMonthlyXpData,
   } = useContext(PlayerContext) as PlayerContextI;
 
   const form = useForm<z.infer<typeof searchBarFormSchema>>({
@@ -50,22 +52,41 @@ const SearchBarForm: React.FC = () => {
 
     if (isOutOfDate) {
       try {
-        const [profileResponse, questResponse] = await Promise.all([
+        const skillIds = Object.keys(runemetrics.skills);
+        const skillXpRequests = skillIds.map((skillId) =>
           axios(
-            `/api/runemetrics/getProfile?name=${encodeURIComponent(
+            `/api/runemetrics/getMonthlyXp?name=${encodeURIComponent(
               values.name
-            )}`,
+            )}&skillId=${encodeURIComponent(skillId)}`,
             {
-              timeout: 10000,
+              timeout: 60000,
             }
-          ),
-          axios(
-            `/api/runemetrics/getQuest?name=${encodeURIComponent(values.name)}`,
-            {
-              timeout: 10000,
-            }
-          ),
-        ]);
+          )
+        );
+
+        const [profileResponse, questResponse, ...monthlyXpResponses] =
+          await Promise.all([
+            axios(
+              `/api/runemetrics/getProfile?name=${encodeURIComponent(
+                values.name
+              )}`,
+              {
+                timeout: 60000,
+              }
+            ),
+            axios(
+              `/api/runemetrics/getQuest?name=${encodeURIComponent(values.name)}`,
+              {
+                timeout: 60000,
+              }
+            ),
+            ...skillXpRequests,
+          ]);
+
+        monthlyXpResponses.forEach((response) => {
+          updateMonthlyXpData(response.data);
+        });
+
         const data = {
           ...profileResponse.data,
           quests: questResponse.data.quests,
