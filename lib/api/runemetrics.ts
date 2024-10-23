@@ -15,7 +15,7 @@ export const getProfileData = async (name: string): Promise<Profile | null> => {
     const url = `${runemetrics.endpoints['profile']}?user=${encodeURIComponent(
       name
     )}&activities=5`;
-    const response = await axios.get(url, { timeout: 10000 });
+    const response = await axios.get(url, { timeout: 60000 });
     const data = response.data;
     if (!data) {
       throw new Error('API response data is invalid or undefined');
@@ -42,7 +42,7 @@ export const getQuestData = async (name: string): Promise<Quests | null> => {
     const url = `${runemetrics.endpoints['quests']}?user=${encodeURIComponent(
       name
     )}`;
-    const response = await axios.get(url, { timeout: 10000 });
+    const response = await axios.get(url, { timeout: 60000 });
     const data = response.data;
     if (!data) {
       throw new Error('API response data is invalid or undefined');
@@ -64,9 +64,9 @@ export const getMonthlyXpData = async (
     const url = `${
       runemetrics.endpoints['monthlyXp']
     }?searchName=${encodeURIComponent(name)}&skillid=${skillId}`;
-    const response = await axios.get(url, { timeout: 10000 });
+    const response = await axios.get(url, { timeout: 60000 });
     const data = response.data;
-    if (!data) {
+    if (!data || typeof data === 'string') {
       throw new Error('API response data is invalid or undefined');
     }
     data.name = name;

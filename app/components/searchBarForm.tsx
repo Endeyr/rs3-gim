@@ -99,7 +99,7 @@ const SearchBarForm: React.FC = () => {
           console.log(error);
           setStatus(
             error.response?.status === 500
-              ? 'Player not found.'
+              ? 'Runescape api unavailable, please try again later'
               : error.response
                 ? error.response.data.error
                 : 'An error occurred',
