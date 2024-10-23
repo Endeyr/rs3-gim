@@ -6,7 +6,7 @@ import XpTable from '@/app/components/xpTable';
 import { PlayerContext } from '@/app/context/playerContext';
 import Container from '@/components/layout/container';
 import type { ChartConfig } from '@/components/ui/chart';
-import { CHART_COLORS, MONTH_NAMES } from '@/lib/const';
+import { CHART_COLORS } from '@/lib/const';
 import type { PlayerContextI } from '@/types/context';
 import { useContext, useMemo, useState } from 'react';
 
@@ -22,64 +22,47 @@ const ProfilePage = ({ params }: ProfilePagePropsI) => {
     PlayerContext
   ) as PlayerContextI;
 
-  const {
-    userData,
-    filteredXpData,
-    chartConfig,
-    chartDescription,
-    chartFooterDate,
-  } = useMemo(() => {
-    const userData = playerDataArray.find((player) => player.name === username);
-    const userXpData = monthlyXpDataArray.find(
-      (player) => player.name === username
-    );
+  const { userData, filteredXpData, chartConfig, chartDescription } =
+    useMemo(() => {
+      const userData = playerDataArray.find(
+        (player) => player.name === username
+      );
+      const userXpData = monthlyXpDataArray.find(
+        (player) => player.name === username
+      );
 
-    if (!userXpData) {
+      if (!userXpData) {
+        return {
+          userData,
+          filteredXpData: [],
+          chartConfig: {},
+          chartDescription: '',
+        };
+      }
+      const filteredXpData = userXpData.monthlyXpGain.filter((skill) =>
+        selectedSkills.includes(skill.skillName)
+      );
+
+      const chartConfig: ChartConfig = filteredXpData.reduce(
+        (acc, skill, index) => {
+          acc[skill.skillName] = {
+            label:
+              skill.skillName.charAt(0).toUpperCase() +
+              skill.skillName.slice(1),
+            color: CHART_COLORS[index % CHART_COLORS.length],
+          };
+          return acc;
+        },
+        {} as ChartConfig
+      );
+
       return {
         userData,
-        filteredXpData: [],
-        chartConfig: {},
-        chartDescription: '',
-        chartFooterDate: '',
+        filteredXpData,
+        chartConfig,
+        chartDescription: `XP Gained by ${userXpData.name}`,
       };
-    }
-    const filteredXpData = userXpData.monthlyXpGain.filter((skill) =>
-      selectedSkills.includes(skill.skillName)
-    );
-
-    const monthDates = filteredXpData
-      .flatMap((skill) => skill.monthData)
-      .map((month) => new Date(month.timestamp))
-      .sort((a, b) => a.getTime() - b.getTime());
-
-    const firstMonth = monthDates[0];
-    const lastMonth = monthDates[monthDates.length - 1];
-
-    const chartConfig: ChartConfig = filteredXpData.reduce(
-      (acc, skill, index) => {
-        acc[skill.skillName] = {
-          label:
-            skill.skillName.charAt(0).toUpperCase() + skill.skillName.slice(1),
-          color: CHART_COLORS[index % CHART_COLORS.length],
-        };
-        return acc;
-      },
-      {} as ChartConfig
-    );
-
-    return {
-      userData,
-      filteredXpData,
-      chartConfig,
-      chartDescription: `XP Gained by ${userXpData.name}`,
-      chartFooterDate:
-        firstMonth && lastMonth
-          ? `${MONTH_NAMES[firstMonth.getMonth()]} - ${
-              MONTH_NAMES[lastMonth.getMonth()]
-            }`
-          : '',
-    };
-  }, [playerDataArray, monthlyXpDataArray, username, selectedSkills]);
+    }, [playerDataArray, monthlyXpDataArray, username, selectedSkills]);
 
   if (!userData) return <div>PlayerData not found</div>;
 
@@ -98,7 +81,6 @@ const ProfilePage = ({ params }: ProfilePagePropsI) => {
             chartConfig={chartConfig}
             chartDescription={chartDescription}
             chartTitle={`Xp for ${userData.name}`}
-            chartFooterDate={chartFooterDate}
             chartFooterDescription='XP Gained'
           />
         ) : (

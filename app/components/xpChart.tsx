@@ -16,7 +16,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart';
-import { CHART_COLORS } from '@/lib/const';
+import { CHART_COLORS, MONTH_NAMES } from '@/lib/const';
 import type { MonthlyXpGainI } from '@/types/xpData';
 import { useMemo } from 'react';
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts';
@@ -28,7 +28,6 @@ export interface XpChartPropsI {
   chartTitle: string;
   chartDescription: string;
   chartFooterDescription: string;
-  chartFooterDate: string;
 }
 
 export interface ProcessedMonthDataI {
@@ -43,9 +42,8 @@ const XpChart = ({
   chartTitle,
   chartDescription,
   chartFooterDescription,
-  chartFooterDate,
 }: XpChartPropsI) => {
-  const { processedData, skillNames } = useMemo(() => {
+  const { processedData, skillNames, chartFooterDate } = useMemo(() => {
     const skills = chartData.map((skill) => skill.skillName);
     const data = chartData.reduce<ProcessedMonthDataI[]>((acc, skill) => {
       skill.monthData.forEach((month, index) => {
@@ -63,10 +61,42 @@ const XpChart = ({
       });
       return acc;
     }, []);
+    // Trim data to include only months between the first and last non-zero XP month
+    const firstNonZeroIndex = data.findIndex((month) =>
+      skills.some((skill) => month[skill] && month[skill] !== 0)
+    );
+
+    const lastNonZeroIndex = data
+      .slice()
+      .reverse()
+      .findIndex((month) =>
+        skills.some((skill) => month[skill] && month[skill] !== 0)
+      );
+
+    const adjustedLastNonZeroIndex = data.length - 1 - lastNonZeroIndex;
+
+    // Keep the first and last 0 XP month to make the chart curve
+    const trimmedData =
+      firstNonZeroIndex === -1 || adjustedLastNonZeroIndex === -1
+        ? []
+        : data.slice(firstNonZeroIndex - 1, adjustedLastNonZeroIndex + 2);
+
+    let footerDate = '';
+    const firstDataPoint = trimmedData[0];
+    const lastDataPoint = trimmedData[trimmedData.length - 1];
+
+    if (firstDataPoint?.timestamp && lastDataPoint?.timestamp) {
+      const firstMonth = new Date(firstDataPoint.timestamp);
+      const lastMonth = new Date(lastDataPoint.timestamp);
+      footerDate = `${MONTH_NAMES[firstMonth.getMonth()]} - ${
+        MONTH_NAMES[lastMonth.getMonth()]
+      }`;
+    }
 
     return {
-      processedData: data,
+      processedData: trimmedData,
       skillNames: skills,
+      chartFooterDate: footerDate,
     };
   }, [chartData]);
 
