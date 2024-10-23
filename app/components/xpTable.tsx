@@ -24,9 +24,8 @@ export interface XpTableI {
 }
 
 const XpTable: React.FC<XpTableI> = ({ playerData }) => {
-  const { removePlayerData, updatePlayerData } = useContext(
-    PlayerContext
-  ) as PlayerContextI;
+  const { removePlayerData, updatePlayerData, removeMonthlyXpData } =
+    useContext(PlayerContext) as PlayerContextI;
   const pathname = usePathname();
 
   const isOutOfDate = playerData ? isPlayerOutOfDate(playerData) : true;
@@ -56,7 +55,10 @@ const XpTable: React.FC<XpTableI> = ({ playerData }) => {
             <Button
               size={'icon'}
               variant={'ghost'}
-              onClick={() => removePlayerData(playerData.name)}
+              onClick={() => {
+                removePlayerData(playerData.name);
+                removeMonthlyXpData(playerData.name);
+              }}
               aria-label={`Remove ${playerData.name} from data`}
               aria-disabled={isOutOfDate ? 'true' : 'false'}
             >
