@@ -2,7 +2,6 @@ import { getMonthlyXpData } from '@/lib/api/runemetrics';
 import { NextRequest, NextResponse } from 'next/server';
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
-  console.log(searchParams);
   const name = searchParams.get('name');
   const skillId = searchParams.get('skillId');
   try {
