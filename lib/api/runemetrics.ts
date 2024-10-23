@@ -17,7 +17,7 @@ export const getProfileData = async (name: string): Promise<Profile | null> => {
     )}&activities=5`;
     const response = await axios.get(url, { timeout: 60000 });
     const data = response.data;
-    if (!data) {
+    if (!data || typeof data === 'string') {
       throw new Error('API response data is invalid or undefined');
     }
     data.timestamp = new Date();
@@ -44,7 +44,7 @@ export const getQuestData = async (name: string): Promise<Quests | null> => {
     )}`;
     const response = await axios.get(url, { timeout: 60000 });
     const data = response.data;
-    if (!data) {
+    if (!data || typeof data === 'string') {
       throw new Error('API response data is invalid or undefined');
     }
     data.timestamp = new Date();
