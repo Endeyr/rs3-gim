@@ -1,3 +1,5 @@
+import { runemetrics } from '@/lib/const';
+
 export interface ActivityI {
   date: string;
   details: string;
@@ -26,4 +28,16 @@ export interface PlayerDataI {
   questscomplete: number;
   questsnotstarted: number;
   totalskill: number;
+  quests: QuestI[];
 }
+
+export interface QuestI {
+  title: string;
+  status: RuneScapeQuestStatus;
+  difficulty: number;
+  members: boolean;
+  questPoints: number;
+  userEligible: boolean;
+}
+
+export type RuneScapeQuestStatus = (typeof runemetrics.questStatuses)[number];
