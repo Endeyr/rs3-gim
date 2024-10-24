@@ -13,7 +13,10 @@ import { Input } from '@/components/ui/input';
 import { runemetrics } from '@/lib/const';
 import { isPlayerOutOfDate } from '@/lib/utils';
 import { searchBarFormSchema } from '@/schemas/searchBarFormSchema';
+import { Quests } from '@/types/api';
 import { PlayerContextI } from '@/types/context';
+import { PlayerDataI } from '@/types/playerData';
+import { MonthlyXpI } from '@/types/xpData';
 import { zodResolver } from '@hookform/resolvers/zod';
 import axios from 'axios';
 import { useContext } from 'react';
@@ -41,6 +44,8 @@ const SearchBarForm: React.FC = () => {
     },
   });
 
+  const skillIds = Object.keys(runemetrics.skills);
+
   const onSubmit = async (values: z.infer<typeof searchBarFormSchema>) => {
     updateIsLoading(true);
     setStatus('', 'reset');
@@ -52,20 +57,19 @@ const SearchBarForm: React.FC = () => {
 
     if (isOutOfDate) {
       try {
-        const skillIds = Object.keys(runemetrics.skills);
         const skillXpRequests = skillIds.map((skillId) =>
-          axios(
+          axios<MonthlyXpI>(
             `/api/runemetrics/getMonthlyXp?name=${encodeURIComponent(
               values.name
             )}&skillId=${encodeURIComponent(skillId)}`,
             {
               timeout: 60000,
             }
-          )
+          ).catch((error) => ({ status: 'rejected', reason: error }))
         );
 
-        const [profileResponse, questResponse] = await Promise.all([
-          axios(
+        const [profileResponse, questResponse] = await Promise.allSettled([
+          axios<PlayerDataI>(
             `/api/runemetrics/getProfile?name=${encodeURIComponent(
               values.name
             )}`,
@@ -73,7 +77,7 @@ const SearchBarForm: React.FC = () => {
               timeout: 60000,
             }
           ),
-          axios(
+          axios<Quests>(
             `/api/runemetrics/getQuest?name=${encodeURIComponent(values.name)}`,
             {
               timeout: 60000,
@@ -81,19 +85,56 @@ const SearchBarForm: React.FC = () => {
           ),
         ]);
 
-        if (profileResponse.status === 200 && questResponse.status === 200) {
+        if (
+          profileResponse.status === 'fulfilled' &&
+          profileResponse.value.status === 200 &&
+          questResponse.status === 'fulfilled' &&
+          questResponse.value.status === 200
+        ) {
           const data = {
-            ...profileResponse.data,
-            quests: questResponse.data.quests,
+            ...profileResponse.value.data,
+            quests: questResponse.value.data.quests,
           };
           updatePlayerData(data);
+        } else {
+          if (
+            profileResponse.status === 'rejected' ||
+            questResponse.status === 'rejected'
+          ) {
+            setStatus('Failed to fetch profile or quest data', 'error');
+          } else {
+            if (profileResponse.value.status !== 200) {
+              setStatus(
+                `Failed to fetch profile: ${profileResponse.value.status}`,
+                'error'
+              );
+            }
+            if (questResponse.value.status !== 200) {
+              setStatus(
+                `Failed to fetch quests: ${questResponse.value.status}`,
+                'error'
+              );
+            }
+          }
         }
 
-        const [...monthlyXpResponses] = await Promise.all([...skillXpRequests]);
-
-        monthlyXpResponses.forEach((response) => {
-          if (response.status === 200) updateMonthlyXpData(response.data);
-        });
+        // batch request to not overload api
+        const chunkSize = 28;
+        for (let i = 0; i < skillXpRequests.length; i += chunkSize) {
+          const chunk = skillXpRequests.slice(i, i + chunkSize);
+          const monthlyXpResponses = await Promise.allSettled([...chunk]);
+          monthlyXpResponses.forEach((response) => {
+            if (
+              response.status === 'fulfilled' &&
+              response.value.status === 200 &&
+              'data' in response.value
+            ) {
+              updateMonthlyXpData(response.value.data);
+            } else {
+              setStatus(`Failed skill XP request: ${response.status}`, 'error');
+            }
+          });
+        }
 
         setStatus('Player data updated successfully.', 'success');
         form.reset();
