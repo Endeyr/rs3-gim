@@ -120,7 +120,7 @@ const SearchBarForm: React.FC = () => {
           }
         }
 
-        const chunkSize = 28;
+        const chunkSize = skillXpRequests.length;
         for (let i = 0; i < skillXpRequests.length; i += chunkSize) {
           const chunk = skillXpRequests.slice(i, i + chunkSize);
           const monthlyXpResponses = await Promise.allSettled([...chunk]);
