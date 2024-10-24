@@ -151,7 +151,7 @@ const XpChart = ({
             />
             <ChartLegend
               content={
-                <ChartLegendContent className='grid h-full w-full grid-cols-6' />
+                <ChartLegendContent className='grid h-full w-full grid-cols-5' />
               }
             />
             {skillNames.map((skillName, index) => (
