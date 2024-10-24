@@ -47,7 +47,12 @@ const XpChart = ({
     const skills = chartData.map((skill) => skill.skillName);
     const data = chartData.reduce<ProcessedMonthDataI[]>((acc, skill) => {
       skill.monthData.forEach((month, index) => {
-        const date = new Date(month.timestamp);
+        let date: Date;
+        if (month.timestamp) {
+          date = new Date(month.timestamp);
+        } else {
+          date = new Date(`2024-${index}-01`);
+        }
         const monthStr = date.toLocaleString('default', { month: 'short' });
 
         if (!acc[index]) {
@@ -61,6 +66,7 @@ const XpChart = ({
       });
       return acc;
     }, []);
+
     // Trim data to include only months between the first and last non-zero XP month
     const firstNonZeroIndex = data.findIndex((month) =>
       skills.some((skill) => month[skill] && month[skill] !== 0)
