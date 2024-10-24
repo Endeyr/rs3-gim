@@ -23,6 +23,14 @@ const Footer = () => {
           </li>
           <li>
             <Link
+              href='/dashboard'
+              className='w-full text-gray-800 hover:text-[#4078c8] dark:text-white dark:hover:text-[#4078c8]'
+            >
+              Dashboard
+            </Link>
+          </li>
+          <li>
+            <Link
               href='/services'
               className='w-full text-gray-800 hover:text-[#4078c8] dark:text-white dark:hover:text-[#4078c8]'
             >
@@ -43,14 +51,6 @@ const Footer = () => {
               className='w-full text-gray-800 hover:text-[#4078c8] dark:text-white dark:hover:text-[#4078c8]'
             >
               Contact
-            </Link>
-          </li>
-          <li>
-            <Link
-              href='/dashboard'
-              className='w-full text-gray-800 hover:text-[#4078c8] dark:text-white dark:hover:text-[#4078c8]'
-            >
-              Dashboard
             </Link>
           </li>
         </ul>
