@@ -140,13 +140,16 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const setStatus = useCallback(
-    (newMessage: string, type: 'error' | 'success' | 'reset') => {
+    (newMessage: string, type: 'error' | 'success' | 'reset' | 'info') => {
       setMessage(newMessage);
       setIsError(type === 'error');
       setIsSuccess(type === 'success');
       if (type === 'reset') {
         setIsError(false);
         setIsSuccess(false);
+      } else if (type === 'info') {
+        setIsError(false);
+        setIsSuccess(true);
       }
     },
     []

@@ -10,7 +10,10 @@ export interface PlayerContextI {
   isError: boolean;
   isSuccess: boolean;
   message: string;
-  setStatus: (newMessage: string, type: 'error' | 'success' | 'reset') => void;
+  setStatus: (
+    newMessage: string,
+    type: 'error' | 'success' | 'reset' | 'info'
+  ) => void;
   monthlyXpDataArray: MonthlyXpI[];
   updateMonthlyXpDataArray: (newMonthlyXpDataArray: MonthlyXpI[]) => void;
   updateMonthlyXpData: (newMonthlyXpData: MonthlyXpI) => void;
