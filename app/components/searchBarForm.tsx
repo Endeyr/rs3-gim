@@ -19,6 +19,7 @@ import { PlayerDataI } from '@/types/playerData';
 import { MonthlyXpI } from '@/types/xpData';
 import { zodResolver } from '@hookform/resolvers/zod';
 import axios from 'axios';
+import axiosRetry from 'axios-retry';
 import { useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -56,6 +57,7 @@ const SearchBarForm: React.FC = () => {
     const isOutOfDate = !existingPlayer || isPlayerOutOfDate(existingPlayer);
 
     if (isOutOfDate) {
+      axiosRetry(axios, { retries: 3 });
       try {
         const skillXpRequests = skillIds.map((skillId) =>
           axios<MonthlyXpI>(
@@ -118,7 +120,6 @@ const SearchBarForm: React.FC = () => {
           }
         }
 
-        // batch request to not overload api
         const chunkSize = 28;
         for (let i = 0; i < skillXpRequests.length; i += chunkSize) {
           const chunk = skillXpRequests.slice(i, i + chunkSize);
