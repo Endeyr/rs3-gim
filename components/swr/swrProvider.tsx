@@ -1,12 +1,11 @@
-import fetch from 'node-fetch';
+import axios from 'axios';
 import { SWRConfig } from 'swr';
 
 const SWRProvider = ({ children }: { children: React.ReactNode }) => {
-  const fetcher = (url: string) => fetch(url).then((res) => res.json());
+  const fetcher = (url: string) => axios.get(url).then((res) => res.data);
   return (
     <SWRConfig
       value={{
-        // refreshInterval: 3000,
         fetcher,
       }}
     >
