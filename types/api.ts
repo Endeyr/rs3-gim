@@ -37,12 +37,18 @@ export type MonthlyExperience = {
 
 export type MonthlyExperienceGain = {
   averageXpGain: number;
-  monthData: number[];
+  monthData: MonthData[];
   skillId: number;
   totalGain: number;
   totalXp: number;
   timestamp?: Date;
   skillName?: string;
+};
+
+export type MonthData = {
+  xpGain: number;
+  timestamp?: Date;
+  rank: number;
 };
 
 export type Profile = {

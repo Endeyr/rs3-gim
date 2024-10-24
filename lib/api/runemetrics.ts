@@ -1,11 +1,11 @@
-import {
+import type {
   MonthlyExperience,
   MonthlyExperienceGain,
   Profile,
+  ProfileSkills,
   Quests,
 } from '@/types/api';
 import axios from 'axios';
-import { ProfileSkills } from './../../types/api';
 import { runemetrics } from './../const';
 
 const skillsMap = new Map(Object.entries(runemetrics.skills));
@@ -15,7 +15,7 @@ export const getProfileData = async (name: string): Promise<Profile | null> => {
     const url = `${runemetrics.endpoints['profile']}?user=${encodeURIComponent(
       name
     )}&activities=5`;
-    const response = await axios.get(url, { timeout: 60000 });
+    const response = await axios.get<Profile>(url, { timeout: 60000 });
     const data = response.data;
     if (!data || typeof data === 'string') {
       throw new Error('API response data is invalid or undefined');
@@ -42,7 +42,7 @@ export const getQuestData = async (name: string): Promise<Quests | null> => {
     const url = `${runemetrics.endpoints['quests']}?user=${encodeURIComponent(
       name
     )}`;
-    const response = await axios.get(url, { timeout: 60000 });
+    const response = await axios.get<Quests>(url, { timeout: 60000 });
     const data = response.data;
     if (!data || typeof data === 'string') {
       throw new Error('API response data is invalid or undefined');
@@ -61,11 +61,13 @@ export const getMonthlyXpData = async (
   skillId: number
 ): Promise<MonthlyExperience | null> => {
   try {
-    const parsedName = name.replace(/ /g, '_')
+    const parsedName = name.replace(/ /g, '_');
     const url = `${
       runemetrics.endpoints['monthlyXp']
     }?searchName=${parsedName}&skillid=${skillId}`;
-    const response = await axios.get(url, { timeout: 60000 });
+    const response = await axios.get<MonthlyExperience>(url, {
+      timeout: 60000,
+    });
     const data = response.data;
     if (!data || typeof data === 'string') {
       throw new Error('API response data is invalid or undefined');
@@ -75,6 +77,14 @@ export const getMonthlyXpData = async (
       const skillName = skillsMap.get(String(xpGain.skillId));
       xpGain.timestamp = new Date();
       xpGain.skillName = skillName || 'unknown';
+      if (xpGain.monthData.length === 0) {
+        for (let i = 0; i < 13; i++) {
+          xpGain.monthData.push({
+            xpGain: 0,
+            rank: 0,
+          });
+        }
+      }
     });
     return data as MonthlyExperience;
   } catch (error: unknown) {
