@@ -20,7 +20,7 @@ import { MonthlyXpI } from '@/types/xpData';
 import { zodResolver } from '@hookform/resolvers/zod';
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { PlayerContext } from '../context/playerContext';
@@ -45,11 +45,14 @@ const SearchBarForm: React.FC = () => {
     },
   });
 
+  useEffect(() => {
+    setStatus('', 'reset');
+  }, [setStatus]);
+
   const skillIds = Object.keys(runemetrics.skills);
 
   const onSubmit = async (values: z.infer<typeof searchBarFormSchema>) => {
     updateIsLoading(true);
-    setStatus('', 'reset');
 
     const existingPlayer = playerDataArray.find(
       (player) => player.name === values.name
