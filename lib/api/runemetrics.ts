@@ -94,7 +94,6 @@ export const getMonthlyXpData = async (
 };
 
 const handleError = (error: unknown, functionName: string) => {
-  console.error(`Error in ${functionName}:`, error);
   if (axios.isAxiosError(error)) {
     throw new Error(`${functionName} error: ${error.message}`);
   } else if (error instanceof Error) {
