@@ -21,6 +21,8 @@ export interface PlayerDataI {
   name: string;
   rank: string;
   melee: number;
+  magic: number;
+  ranged: number;
   combatlevel: number;
   loggedIn: 'true' | 'false';
   totalxp: number;
