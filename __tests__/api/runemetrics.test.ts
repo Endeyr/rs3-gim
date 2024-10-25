@@ -33,7 +33,7 @@ describe('runemetrics api calls', () => {
 
       expect(mockedAxios.get).toHaveBeenCalledWith(
         expect.stringContaining('testPlayer'),
-        expect.objectContaining({ timeout: 10000 })
+        expect.objectContaining({ timeout: 60000 })
       );
     });
   });
@@ -58,7 +58,7 @@ describe('runemetrics api calls', () => {
 
       expect(mockedAxios.get).toHaveBeenCalledWith(
         expect.stringContaining('testPlayer'),
-        expect.objectContaining({ timeout: 10000 })
+        expect.objectContaining({ timeout: 60000 })
       );
     });
   });
@@ -71,14 +71,11 @@ describe('runemetrics api calls', () => {
 
       const player = await getQuestData('testPlayer');
 
-      expect(player).toEqual({
-        ...mockRunemetricsQuestsData,
-        timestamp: expect.any(Date),
-      });
+      expect(player).toEqual(mockRunemetricsQuestsData);
 
       expect(mockedAxios.get).toHaveBeenCalledWith(
         expect.stringContaining('testPlayer'),
-        expect.objectContaining({ timeout: 10000 })
+        expect.objectContaining({ timeout: 60000 })
       );
     });
   });

@@ -1,3 +1,7 @@
+import { PlayerDataI, QuestI } from '@/types/playerData';
+import { MonthlyXpI } from '@/types/xpData';
+
+// Mock Hiscores API Data
 export const mockPlayerResponseBody = `111986,2910,506979661
 244774,99,13115227
 241085,99,13418382
@@ -128,7 +132,37 @@ export const mockParsedPlayerData = {
   username: 'testPlayer',
 };
 
-export const mockRunemetricsProfileData = {
+export const mockParsedPlayerDataArray = [mockParsedPlayerData];
+// Mocked Runemetrics API Data
+
+export const mockRunemetricsQuestsData: QuestI[] = [
+  {
+    title: 'Mock Quest',
+    status: 'COMPLETED',
+    difficulty: 1,
+    members: true,
+    questPoints: 1,
+    userEligible: true,
+  },
+  {
+    title: 'Mock Quest 2',
+    status: 'NOT_STARTED',
+    difficulty: 1,
+    members: false,
+    questPoints: 1,
+    userEligible: false,
+  },
+  {
+    title: 'Mock Quest 3',
+    status: 'STARTED',
+    difficulty: 1,
+    members: true,
+    questPoints: 1,
+    userEligible: true,
+  },
+];
+
+export const mockRunemetricsProfileData: PlayerDataI = {
   magic: 0,
   questsstarted: 0,
   totalskill: 0,
@@ -354,46 +388,20 @@ export const mockRunemetricsProfileData = {
   combatlevel: 0,
   loggedIn: 'false' as const,
   timestamp: new Date(),
+  quests: mockRunemetricsQuestsData,
 };
 
-// API result has around 340 quest objects
-export const mockRunemetricsQuestsData = {
-  quests: [
-    {
-      title: 'Mock Quest',
-      status: 'COMPLETED',
-      difficulty: 1,
-      members: true,
-      questPoints: 1,
-      userEligible: true,
-    },
-    {
-      title: 'Mock Quest 2',
-      status: 'NOT_STARTED',
-      difficulty: 1,
-      members: false,
-      questPoints: 1,
-      userEligible: false,
-    },
-    {
-      title: 'Mock Quest 3',
-      status: 'STARTED',
-      difficulty: 1,
-      members: true,
-      questPoints: 1,
-      userEligible: true,
-    },
-  ],
-  loggedIn: 'false' as const,
-};
+export const mockRunemetricsProfileDataArray: PlayerDataI[] = [
+  mockRunemetricsProfileData,
+];
 
-export const mockRunemetricsMonthlyXpData = {
+export const mockRunemetricsMonthlyXpData: MonthlyXpI = {
   monthlyXpGain: [
     {
       skillId: 0,
-      totalXp: 0,
-      averageXpGain: 0,
-      totalGain: 0,
+      totalXp: 1000000,
+      averageXpGain: 12000,
+      totalGain: 265000,
       monthData: [
         {
           xpGain: 0,
@@ -431,14 +439,14 @@ export const mockRunemetricsMonthlyXpData = {
           rank: 0,
         },
         {
-          xpGain: 0,
+          xpGain: 90000,
           timestamp: 1718547268614,
-          rank: 0,
+          rank: 100,
         },
         {
-          xpGain: 0,
+          xpGain: 100000,
           timestamp: 1722278089630,
-          rank: 0,
+          rank: 90,
         },
         {
           xpGain: 0,
@@ -446,9 +454,9 @@ export const mockRunemetricsMonthlyXpData = {
           rank: 0,
         },
         {
-          xpGain: 0,
+          xpGain: 75000,
           timestamp: 1726496068614,
-          rank: 0,
+          rank: 110,
         },
         {
           xpGain: 0,
@@ -456,10 +464,15 @@ export const mockRunemetricsMonthlyXpData = {
           rank: 0,
         },
       ],
-      timestamp: new Date(),
-      name: 'testPlayer',
+      timestamp: new Date().toISOString(),
+
       skillName: 'Attack',
     },
   ],
   loggedIn: 'false' as const,
+  name: 'testPlayer',
 };
+
+export const mockRunemetricsMonthlyXpDataArray: MonthlyXpI[] = [
+  mockRunemetricsMonthlyXpData,
+];

@@ -19,7 +19,6 @@ describe('SearchBar', () => {
   });
 
   it('initially disables the search button if loading', () => {
-    // Update MockPlayerProvider to pass isLoading: true
     render(
       <MockPlayerProvider isLoading={true}>
         <SearchBar />
