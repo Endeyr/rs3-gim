@@ -10,6 +10,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { configureAxiosWithRetry } from '@/lib/axiosConfig';
 import { runemetrics } from '@/lib/const';
 import { isPlayerOutOfDate } from '@/lib/utils';
 import { searchBarFormSchema } from '@/schemas/searchBarFormSchema';
@@ -19,8 +20,7 @@ import { PlayerDataI } from '@/types/playerData';
 import { MonthlyXpI } from '@/types/xpData';
 import { zodResolver } from '@hookform/resolvers/zod';
 import axios from 'axios';
-import axiosRetry from 'axios-retry';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { PlayerContext } from '../context/playerContext';
@@ -45,14 +45,81 @@ const SearchBarForm: React.FC = () => {
     },
   });
 
-  useEffect(() => {
-    setStatus('', 'reset');
-  }, [setStatus]);
-
+  const controllerRef = useRef<AbortController | null>(null);
   const skillIds = Object.keys(runemetrics.skills);
+
+  const fetchSkillXp = async (username: string, signal: AbortSignal) => {
+    const skillXpRequests = skillIds.map((skillId) =>
+      axios<MonthlyXpI>(
+        `/api/runemetrics/getMonthlyXp?name=${encodeURIComponent(
+          username
+        )}&skillId=${encodeURIComponent(skillId)}`,
+        { timeout: 60000, signal }
+      )
+    );
+
+    const responses = await Promise.allSettled(skillXpRequests);
+
+    responses.forEach((response) => {
+      if (response.status === 'fulfilled' && response.value.status === 200) {
+        updateMonthlyXpData(response.value.data);
+      } else {
+        if (signal.aborted) {
+          throw new Error('Request aborted');
+        }
+      }
+    });
+  };
+
+  const fetchProfileAndQuests = async (
+    username: string,
+    signal: AbortSignal
+  ) => {
+    const [profileResponse, questResponse] = await Promise.allSettled([
+      axios<PlayerDataI>(
+        `/api/runemetrics/getProfile?name=${encodeURIComponent(username)}`,
+        {
+          signal,
+        }
+      ),
+      axios<Quests>(
+        `/api/runemetrics/getQuest?name=${encodeURIComponent(username)}`,
+        {
+          signal,
+        }
+      ),
+    ]);
+
+    if (
+      profileResponse.status === 'fulfilled' &&
+      profileResponse.value.status === 200 &&
+      questResponse.status === 'fulfilled' &&
+      questResponse.value.status === 200
+    ) {
+      const data = {
+        ...profileResponse.value.data,
+        quests: questResponse.value.data.quests,
+      };
+      updatePlayerData(data);
+    } else {
+      if (signal.aborted) {
+        throw new Error('Request aborted');
+      }
+      throw new Error('Failed to fetch profile or quest data');
+    }
+  };
 
   const onSubmit = async (values: z.infer<typeof searchBarFormSchema>) => {
     updateIsLoading(true);
+    setStatus(
+      'Fetching from Runescape API can take up to a minute, please wait...',
+      'info'
+    );
+    if (controllerRef.current) {
+      controllerRef.current.abort();
+    }
+    controllerRef.current = new AbortController();
+    const signal = controllerRef.current.signal;
 
     const existingPlayer = playerDataArray.find(
       (player) => player.name === values.name
@@ -60,100 +127,25 @@ const SearchBarForm: React.FC = () => {
     const isOutOfDate = !existingPlayer || isPlayerOutOfDate(existingPlayer);
 
     if (isOutOfDate) {
-      axiosRetry(axios, { retries: 3 });
       try {
-        const skillXpRequests = skillIds.map((skillId) =>
-          axios<MonthlyXpI>(
-            `/api/runemetrics/getMonthlyXp?name=${encodeURIComponent(
-              values.name
-            )}&skillId=${encodeURIComponent(skillId)}`,
-            {
-              timeout: 60000,
-            }
-          ).catch((error) => ({ status: 'rejected', reason: error }))
-        );
-
-        const [profileResponse, questResponse] = await Promise.allSettled([
-          axios<PlayerDataI>(
-            `/api/runemetrics/getProfile?name=${encodeURIComponent(
-              values.name
-            )}`,
-            {
-              timeout: 60000,
-            }
-          ),
-          axios<Quests>(
-            `/api/runemetrics/getQuest?name=${encodeURIComponent(values.name)}`,
-            {
-              timeout: 60000,
-            }
-          ),
-        ]);
-
-        if (
-          profileResponse.status === 'fulfilled' &&
-          profileResponse.value.status === 200 &&
-          questResponse.status === 'fulfilled' &&
-          questResponse.value.status === 200
-        ) {
-          const data = {
-            ...profileResponse.value.data,
-            quests: questResponse.value.data.quests,
-          };
-          updatePlayerData(data);
-        } else {
-          if (
-            profileResponse.status === 'rejected' ||
-            questResponse.status === 'rejected'
-          ) {
-            setStatus('Failed to fetch profile or quest data', 'error');
-          } else {
-            if (profileResponse.value.status !== 200) {
-              setStatus(
-                `Failed to fetch profile: ${profileResponse.value.status}`,
-                'error'
-              );
-            }
-            if (questResponse.value.status !== 200) {
-              setStatus(
-                `Failed to fetch quests: ${questResponse.value.status}`,
-                'error'
-              );
-            }
-          }
-        }
-
-        const chunkSize = skillXpRequests.length;
-        for (let i = 0; i < skillXpRequests.length; i += chunkSize) {
-          const chunk = skillXpRequests.slice(i, i + chunkSize);
-          const monthlyXpResponses = await Promise.allSettled([...chunk]);
-          monthlyXpResponses.forEach((response) => {
-            if (
-              response.status === 'fulfilled' &&
-              response.value.status === 200 &&
-              'data' in response.value
-            ) {
-              updateMonthlyXpData(response.value.data);
-            } else {
-              setStatus(`Failed skill XP request: ${response.status}`, 'error');
-            }
-          });
-        }
-
+        await fetchProfileAndQuests(values.name, signal);
+        await fetchSkillXp(values.name, signal);
         setStatus('Player data updated successfully.', 'success');
         form.reset();
       } catch (error) {
-        if (axios.isAxiosError(error)) {
+        if (signal.aborted) {
+          setStatus('Fetch aborted.', 'error');
+        } else if (axios.isAxiosError(error)) {
           setStatus(
             error.response?.status === 500
-              ? 'Runescape api unavailable, please try again later'
+              ? 'Runescape api unavailable, please try again later.'
               : error.response
                 ? error.response.data.error
-                : 'An error occurred',
+                : 'An error occurred.',
             'error'
           );
         } else {
-          setStatus(`An unexpected error occurred; ${error}`, 'error');
+          setStatus(`An unexpected error occurred: ${error}`, 'error');
         }
       } finally {
         updateIsLoading(false);
@@ -163,6 +155,22 @@ const SearchBarForm: React.FC = () => {
       setStatus('Player data is up to date.', 'error');
     }
   };
+
+  useEffect(() => {
+    setStatus('', 'reset');
+    configureAxiosWithRetry({
+      retries: 3,
+      timeout: 60000,
+      shouldRetry: () => {
+        return true;
+      },
+    });
+    return () => {
+      if (controllerRef.current) {
+        controllerRef.current?.abort();
+      }
+    };
+  }, [setStatus]);
 
   return (
     <div className='mx-auto w-full px-2'>
@@ -189,6 +197,7 @@ const SearchBarForm: React.FC = () => {
                   <FormLabel>Username</FormLabel>
                   <FormControl>
                     <Input
+                      data-testid='form-input-username'
                       placeholder='Runescape Username'
                       {...field}
                       disabled={isLoading}
@@ -203,7 +212,11 @@ const SearchBarForm: React.FC = () => {
             />
           </fieldset>
           <div className='w-full'>
-            <Button type='submit' disabled={isLoading}>
+            <Button
+              data-testid='form-submit-btn'
+              type='submit'
+              disabled={isLoading}
+            >
               {!isLoading ? 'Add' : 'Loading...'}
             </Button>
           </div>
@@ -211,6 +224,7 @@ const SearchBarForm: React.FC = () => {
       </Form>
       {message && (
         <p
+          data-testid='status-message'
           className={`mt-2 w-full break-words ${
             isError
               ? 'text-red-500'
@@ -218,7 +232,7 @@ const SearchBarForm: React.FC = () => {
                 ? 'text-green-500'
                 : 'text-primary'
           }`}
-          role={isError ? 'alert' : isSuccess ? 'status' : ''}
+          role={isError ? 'alert' : isSuccess ? 'status' : 'info'}
           aria-live='polite'
           aria-atomic='true'
         >
