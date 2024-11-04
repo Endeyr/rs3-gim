@@ -6,9 +6,10 @@ import XpTable from '@/app/components/xpTable';
 import { PlayerContext } from '@/app/context/playerContext';
 import Container from '@/components/layout/container';
 import type { ChartConfig } from '@/components/ui/chart';
+import { fetchSkillXp } from '@/lib/api/fetchSkillXp';
 import { CHART_COLORS } from '@/lib/const';
 import type { PlayerContextI } from '@/types/context';
-import { useContext, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 interface ProfilePagePropsI {
   params: { username: string };
@@ -18,12 +19,40 @@ const ProfilePage = ({ params }: ProfilePagePropsI) => {
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
 
   const { username } = params;
-  const { playerDataArray, monthlyXpDataArray } = useContext(
-    PlayerContext
-  ) as PlayerContextI;
+  const { playerDataArray, monthlyXpDataArray, updateMonthlyXpData } =
+    useContext(PlayerContext) as PlayerContextI;
+
+  const controllerRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    const fetchXpData = async () => {
+      if (controllerRef.current) {
+        controllerRef.current.abort();
+      }
+      controllerRef.current = new AbortController();
+      const signal = controllerRef.current.signal;
+
+      const userXpData = monthlyXpDataArray.find(
+        (player) => player.name === decodeURIComponent(username)
+      );
+
+      if (!userXpData || userXpData.monthlyXpGain.length <= 28) {
+        await fetchSkillXp(
+          decodeURIComponent(username),
+          signal,
+          updateMonthlyXpData
+        );
+      }
+    };
+
+    fetchXpData();
+
+    return () => controllerRef.current?.abort();
+  }, [username, monthlyXpDataArray, updateMonthlyXpData]);
 
   const { userData, filteredXpData, chartConfig, chartDescription } =
     useMemo(() => {
+      // Find the user's data
       const userData = playerDataArray.find(
         (player) => player.name === decodeURIComponent(username)
       );
@@ -31,7 +60,7 @@ const ProfilePage = ({ params }: ProfilePagePropsI) => {
       const userXpData = monthlyXpDataArray.find(
         (player) => player.name === decodeURIComponent(username)
       );
-
+      // User's data is undefined return
       if (!userXpData) {
         return {
           userData,
@@ -40,6 +69,8 @@ const ProfilePage = ({ params }: ProfilePagePropsI) => {
           chartDescription: '',
         };
       }
+
+      // Add filter for chart
       const filteredXpData = userXpData.monthlyXpGain.filter((skill) =>
         selectedSkills.includes(skill.skillName)
       );
