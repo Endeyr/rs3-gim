@@ -1,10 +1,10 @@
 'use client';
 
+import { getItem, setItem } from '@/lib/localStorage';
 import type { PlayerContextI } from '@/types/context';
 import type { PlayerDataI } from '@/types/playerData';
 import type { MonthlyXpI } from '@/types/xpData';
-import { createContext, useCallback, useEffect, useState } from 'react';
-
+import { createContext, useCallback, useState } from 'react';
 const defaultPlayerContext: PlayerContextI = {
   playerDataArray: [],
   isLoading: true,
@@ -21,48 +21,25 @@ const defaultPlayerContext: PlayerContextI = {
   updateMonthlyXpData: () => {},
   removeMonthlyXpData: () => {},
 };
-
 export const PlayerContext =
   createContext<PlayerContextI>(defaultPlayerContext);
-
 export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [playerDataArray, setPlayerDataArray] = useState<PlayerDataI[]>([]);
+  // Initial State Setup
+  const [playerDataArray, setPlayerDataArray] = useState<PlayerDataI[]>(() => {
+    return getItem('playerDataArray') || [];
+  });
   const [monthlyXpDataArray, setMonthlyXpDataArray] = useState<MonthlyXpI[]>(
-    []
+    () => {
+      return getItem('monthlyXpDataArray') || [];
+    }
   );
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const [isSuccess, setIsSuccess] = useState(true);
   const [message, setMessage] = useState('');
-
-  useEffect(() => {
-    const savedPlayerDataArray = localStorage.getItem('playerDataArray');
-    const savedMonthlyXpData = localStorage.getItem('monthlyXpDataArray');
-
-    if (savedPlayerDataArray) {
-      try {
-        setPlayerDataArray(JSON.parse(savedPlayerDataArray));
-      } catch (error) {
-        console.error('Failed to parse player data from localStorage:', error);
-      }
-    }
-
-    if (savedMonthlyXpData) {
-      try {
-        setMonthlyXpDataArray(JSON.parse(savedMonthlyXpData));
-      } catch (error) {
-        console.error(
-          'Failed to parse monthly XP data from localStorage:',
-          error
-        );
-      }
-    }
-
-    setIsLoading(false);
-  }, []);
-
+  // Memoized functions
   const updatePlayerDataArray = useCallback(
     (newPlayerDataArray: PlayerDataI[]) => {
       setPlayerDataArray((prevData) => {
@@ -70,17 +47,9 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
           (newPlayer) =>
             !prevData.some((prevPlayer) => prevPlayer.name === newPlayer.name)
         );
-
         if (newData.length === 0) return prevData;
-
         const combinedData = [...prevData, ...newData];
-
-        try {
-          localStorage.setItem('playerDataArray', JSON.stringify(combinedData));
-        } catch (error) {
-          console.error(`Failed to update localStorage: ${error}`);
-        }
-
+        setItem('playerDataArray', combinedData);
         return combinedData;
       });
     },
@@ -93,13 +62,11 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
       const existingPlayerIndex = prevData.findIndex(
         (player) => player.name === newPlayerData.name
       );
-
       const isDataUpdated =
         existingPlayerIndex !== -1 &&
         JSON.stringify(prevData[existingPlayerIndex]) ===
           JSON.stringify(newPlayerData);
       if (isDataUpdated) return prevData;
-
       const updatedData =
         existingPlayerIndex !== -1
           ? [
@@ -108,13 +75,7 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
               ...prevData.slice(existingPlayerIndex + 1),
             ]
           : [...prevData, newPlayerData];
-
-      try {
-        localStorage.setItem(`playerDataArray`, JSON.stringify(updatedData));
-      } catch (error) {
-        console.error(`Failed to update localStorage: ${error}`);
-      }
-
+      setItem(`playerDataArray`, updatedData);
       return updatedData;
     });
   }, []);
@@ -122,15 +83,8 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
   const removePlayerData = useCallback((name: string) => {
     setPlayerDataArray((prevData) => {
       const updatedData = prevData.filter((player) => player.name !== name);
-
       if (updatedData.length === prevData.length) return prevData;
-
-      try {
-        localStorage.setItem(`playerDataArray`, JSON.stringify(updatedData));
-      } catch (error) {
-        console.error(`Failed to update localStorage: ${error}`);
-      }
-
+      setItem(`playerDataArray`, updatedData);
       return updatedData;
     });
   }, []);
@@ -162,20 +116,9 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
           (newPlayer) =>
             !prevData.some((prevPlayer) => prevPlayer.name === newPlayer.name)
         );
-
         if (newData.length === 0) return prevData;
-
         const combinedData = [...prevData, ...newData];
-
-        try {
-          localStorage.setItem(
-            'monthlyXpDataArray',
-            JSON.stringify(combinedData)
-          );
-        } catch (error) {
-          console.error(`Failed to update localStorage: ${error}`);
-        }
-
+        setItem('monthlyXpDataArray', combinedData);
         return combinedData;
       });
     },
@@ -209,25 +152,11 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
           updatedPlayer,
           ...prevData.slice(existingPlayerIndex + 1),
         ];
-        try {
-          localStorage.setItem(
-            'monthlyXpDataArray',
-            JSON.stringify(updatedData)
-          );
-        } catch (error) {
-          console.error(`Failed to update localStorage: ${error}`);
-        }
+        setItem('monthlyXpDataArray', updatedData);
         return updatedData;
       } else {
         const updatedData = [...prevData, newMonthlyData];
-        try {
-          localStorage.setItem(
-            'monthlyXpDataArray',
-            JSON.stringify(updatedData)
-          );
-        } catch (error) {
-          console.error(`Failed to update localStorage: ${error}`);
-        }
+        setItem('monthlyXpDataArray', updatedData);
         return updatedData;
       }
     });
@@ -236,15 +165,8 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
   const removeMonthlyXpData = useCallback((name: string) => {
     setMonthlyXpDataArray((prevData) => {
       const updatedData = prevData.filter((player) => player.name !== name);
-
       if (updatedData.length === prevData.length) return prevData;
-
-      try {
-        localStorage.setItem(`monthlyXpDataArray`, JSON.stringify(updatedData));
-      } catch (error) {
-        console.error(`Failed to update localStorage: ${error}`);
-      }
-
+      setItem(`monthlyXpDataArray`, updatedData);
       return updatedData;
     });
   }, []);
