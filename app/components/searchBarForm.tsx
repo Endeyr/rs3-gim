@@ -11,14 +11,12 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
+import { fetchProfileAndQuests } from '@/lib/api/fetchProfileAndQuests';
+import { fetchSkillXp } from '@/lib/api/fetchSkillXp';
 import { configureAxiosWithRetry } from '@/lib/axiosConfig';
-import { runemetrics } from '@/lib/const';
 import { isPlayerOutOfDate } from '@/lib/utils';
 import { searchBarFormSchema } from '@/schemas/searchBarFormSchema';
-import { Quests } from '@/types/api';
-import { PlayerContextI } from '@/types/context';
-import { PlayerDataI } from '@/types/playerData';
-import { MonthlyXpI } from '@/types/xpData';
+import type { PlayerContextI } from '@/types/context';
 import { zodResolver } from '@hookform/resolvers/zod';
 import axios from 'axios';
 import { useContext, useEffect, useRef } from 'react';
@@ -47,68 +45,6 @@ const SearchBarForm: React.FC = () => {
   });
 
   const controllerRef = useRef<AbortController | null>(null);
-  const skillIds = Object.keys(runemetrics.skills);
-
-  const fetchSkillXp = async (username: string, signal: AbortSignal) => {
-    const skillXpRequests = skillIds.map((skillId) =>
-      axios<MonthlyXpI>(
-        `/api/runemetrics/getMonthlyXp?name=${encodeURIComponent(
-          username
-        )}&skillId=${encodeURIComponent(skillId)}`,
-        { timeout: 60000, signal }
-      )
-    );
-
-    const responses = await Promise.allSettled(skillXpRequests);
-
-    responses.forEach((response) => {
-      if (response.status === 'fulfilled' && response.value.status === 200) {
-        updateMonthlyXpData(response.value.data);
-      } else {
-        if (signal.aborted) {
-          throw new Error('Request aborted');
-        }
-      }
-    });
-  };
-
-  const fetchProfileAndQuests = async (
-    username: string,
-    signal: AbortSignal
-  ) => {
-    const [profileResponse, questResponse] = await Promise.allSettled([
-      axios<PlayerDataI>(
-        `/api/runemetrics/getProfile?name=${encodeURIComponent(username)}`,
-        {
-          signal,
-        }
-      ),
-      axios<Quests>(
-        `/api/runemetrics/getQuest?name=${encodeURIComponent(username)}`,
-        {
-          signal,
-        }
-      ),
-    ]);
-
-    if (
-      profileResponse.status === 'fulfilled' &&
-      profileResponse.value.status === 200 &&
-      questResponse.status === 'fulfilled' &&
-      questResponse.value.status === 200
-    ) {
-      const data = {
-        ...profileResponse.value.data,
-        quests: questResponse.value.data.quests,
-      };
-      updatePlayerData(data);
-    } else {
-      if (signal.aborted) {
-        throw new Error('Request aborted');
-      }
-      throw new Error('Failed to fetch profile or quest data');
-    }
-  };
 
   const onSubmit = async (values: z.infer<typeof searchBarFormSchema>) => {
     updateIsLoading(true);
@@ -129,8 +65,8 @@ const SearchBarForm: React.FC = () => {
 
     if (isOutOfDate) {
       try {
-        await fetchProfileAndQuests(values.name, signal);
-        await fetchSkillXp(values.name, signal);
+        await fetchProfileAndQuests(values.name, signal, updatePlayerData);
+        await fetchSkillXp(values.name, signal, updateMonthlyXpData);
         setStatus('Player data updated successfully.', 'success');
         form.reset();
       } catch (error) {

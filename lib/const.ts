@@ -71,6 +71,8 @@ export const runemetrics = {
   },
 };
 
+export const SKILL_IDS = Object.keys(runemetrics.skills);
+
 export const hiscores = {
   endpoints: {
     normal: `http://services.runescape.com/m=hiscore/index_lite.ws`,
