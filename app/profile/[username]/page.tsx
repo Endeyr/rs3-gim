@@ -21,7 +21,6 @@ const ProfilePage = ({ params }: ProfilePagePropsI) => {
   const { username } = params;
   const { playerDataArray, monthlyXpDataArray, updateMonthlyXpData } =
     useContext(PlayerContext) as PlayerContextI;
-
   const controllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
@@ -36,7 +35,9 @@ const ProfilePage = ({ params }: ProfilePagePropsI) => {
         (player) => player.name === decodeURIComponent(username)
       );
 
-      if (!userXpData || userXpData.monthlyXpGain.length <= 28) {
+      if (!userXpData) return;
+
+      if (userXpData.monthlyXpGain.length <= 28) {
         await fetchSkillXp(
           decodeURIComponent(username),
           signal,
