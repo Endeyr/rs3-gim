@@ -11,8 +11,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { capitalizeFirstLetter, isPlayerOutOfDate } from '@/lib/utils';
-import { PlayerContextI } from '@/types/context';
-import { PlayerDataI } from '@/types/playerData';
+import type { PlayerContextI } from '@/types/context';
+import type { PlayerDataI } from '@/types/playerData';
 import { RefreshCw, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
