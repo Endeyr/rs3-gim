@@ -10,6 +10,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Spinner } from '@/components/ui/spinner';
 import { configureAxiosWithRetry } from '@/lib/axiosConfig';
 import { runemetrics } from '@/lib/const';
 import { isPlayerOutOfDate } from '@/lib/utils';
@@ -213,11 +214,21 @@ const SearchBarForm: React.FC = () => {
           </fieldset>
           <div className='w-full'>
             <Button
+              className='h-12 w-full md:w-1/2'
               data-testid='form-submit-btn'
               type='submit'
               disabled={isLoading}
             >
-              {!isLoading ? 'Add' : 'Loading...'}
+              {!isLoading ? (
+                'Add'
+              ) : (
+                <Spinner
+                  className='dark:text-color-black text-color-white'
+                  size={'small'}
+                >
+                  Loading...
+                </Spinner>
+              )}
             </Button>
           </div>
         </form>
