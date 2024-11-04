@@ -7,24 +7,32 @@ export const fetchSkillXp = async (
   signal: AbortSignal,
   updateMonthlyXpData: (newMonthlyXpData: MonthlyXpI) => void
 ) => {
-  const skillXpRequests = SKILL_IDS.map((skillId) =>
-    axios<MonthlyXpI>(
-      `/api/runemetrics/getMonthlyXp?name=${encodeURIComponent(
-        username
-      )}&skillId=${encodeURIComponent(skillId)}`,
-      { timeout: 60000, signal }
-    )
-  );
+  try {
+    const skillXpRequests = SKILL_IDS.map((skillId) =>
+      axios<MonthlyXpI>(
+        `/api/runemetrics/getMonthlyXp?name=${encodeURIComponent(
+          username
+        )}&skillId=${encodeURIComponent(skillId)}`,
+        { timeout: 60000, signal }
+      )
+    );
 
-  const responses = await Promise.allSettled(skillXpRequests);
+    const responses = await Promise.allSettled(skillXpRequests);
 
-  responses.forEach((response) => {
-    if (response.status === 'fulfilled' && response.value.status === 200) {
-      updateMonthlyXpData(response.value.data);
-    } else {
-      if (signal.aborted) {
-        throw new Error('Request aborted');
+    responses.forEach((response) => {
+      if (response.status === 'fulfilled' && response.value.status === 200) {
+        updateMonthlyXpData(response.value.data);
+      } else if (response.status === 'rejected') {
+        if (signal.aborted) {
+          console.log('Request Aborted');
+        } else if (axios.isAxiosError(response.reason)) {
+          console.error('Request failed:', response.reason.message);
+        } else {
+          console.error('Unexpected error:', response.reason);
+        }
       }
-    }
-  });
+    });
+  } catch (error) {
+    console.error('Error fetching skill XP:', error);
+  }
 };
