@@ -24,11 +24,12 @@ export const getProfileData = async (name: string): Promise<Profile | null> => {
     data.skillvalues.forEach((skill: ProfileSkills) => {
       const skillName = skillsMap.get(String(skill.id));
       if (!skillName) {
-        console.warn(`Invalid skill ID: ${skill.id} - Name not found`);
         skill.skillName = 'unknown';
       } else {
         skill.skillName = skillName;
       }
+      // API sends extra integer at end bc xp is determined to the tenth
+      skill.xp = Math.floor(skill.xp / 10);
     });
     return data as Profile;
   } catch (error: unknown) {
