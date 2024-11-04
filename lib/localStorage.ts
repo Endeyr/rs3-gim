@@ -4,6 +4,7 @@ export const setItem = (key: string, value: unknown) => {
   } catch (error) {
     console.error(error);
   }
+  return undefined;
 };
 
 export const getItem = (key: string) => {
@@ -13,4 +14,5 @@ export const getItem = (key: string) => {
   } catch (error) {
     console.error(error);
   }
+  return undefined;
 };

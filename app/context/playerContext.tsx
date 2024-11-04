@@ -4,7 +4,7 @@ import { getItem, setItem } from '@/lib/localStorage';
 import type { PlayerContextI } from '@/types/context';
 import type { PlayerDataI } from '@/types/playerData';
 import type { MonthlyXpI } from '@/types/xpData';
-import { createContext, useCallback, useState } from 'react';
+import { createContext, useCallback, useEffect, useState } from 'react';
 const defaultPlayerContext: PlayerContextI = {
   playerDataArray: [],
   isLoading: true,
@@ -27,18 +27,24 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   // Initial State Setup
-  const [playerDataArray, setPlayerDataArray] = useState<PlayerDataI[]>(() => {
-    return getItem('playerDataArray') || [];
-  });
+  const [playerDataArray, setPlayerDataArray] = useState<PlayerDataI[]>([]);
   const [monthlyXpDataArray, setMonthlyXpDataArray] = useState<MonthlyXpI[]>(
-    () => {
-      return getItem('monthlyXpDataArray') || [];
-    }
+    []
   );
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
   const [isSuccess, setIsSuccess] = useState(true);
   const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    if (playerDataArray.length === 0) {
+      setPlayerDataArray(getItem('playerDataArray') ?? []);
+    }
+    if (monthlyXpDataArray.length === 0) {
+      setMonthlyXpDataArray(getItem('monthlyXpDataArray') ?? []);
+    }
+  }, [monthlyXpDataArray.length, playerDataArray.length]);
+
   // Memoized functions
   const updatePlayerDataArray = useCallback(
     (newPlayerDataArray: PlayerDataI[]) => {
