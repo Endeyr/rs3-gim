@@ -35,7 +35,7 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
       return getItem('monthlyXpDataArray') || [];
     }
   );
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
   const [isSuccess, setIsSuccess] = useState(true);
   const [message, setMessage] = useState('');
