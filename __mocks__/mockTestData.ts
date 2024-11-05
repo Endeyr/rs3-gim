@@ -464,13 +464,13 @@ export const mockRunemetricsMonthlyXpData: MonthlyXpI = {
           rank: 0,
         },
       ],
-      timestamp: new Date().toISOString(),
 
       skillName: 'Attack',
     },
   ],
   loggedIn: 'false' as const,
   name: 'testPlayer',
+  timestamp: new Date(),
 };
 
 export const mockRunemetricsMonthlyXpDataArray: MonthlyXpI[] = [
