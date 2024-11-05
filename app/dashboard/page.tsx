@@ -2,33 +2,16 @@
 
 import Container from '@/components/layout/container';
 import { PlayerContextI } from '@/types/context';
-import { PlayerDataI } from '@/types/playerData';
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import MessageStatus from '../components/messageStatus';
 import SearchBar from '../components/searchBar';
 import XpTable from '../components/xpTable';
 import { PlayerContext } from '../context/playerContext';
 
 const Dashboard = () => {
-  const { playerDataArray, updatePlayerDataArray, message } = useContext(
+  const { playerDataArray, message } = useContext(
     PlayerContext
   ) as PlayerContextI;
-
-  useEffect(() => {
-    const savedPlayerDataArray = localStorage.getItem('playerDataArray');
-    if (savedPlayerDataArray) {
-      try {
-        const playerDataArray = JSON.parse(
-          savedPlayerDataArray
-        ) as PlayerDataI[];
-        updatePlayerDataArray(playerDataArray);
-      } catch (error) {
-        console.error(
-          `Failed to parse player data from localStorage: ${error}`
-        );
-      }
-    }
-  }, [updatePlayerDataArray]);
 
   const dynamicClasses =
     playerDataArray.length >= 5

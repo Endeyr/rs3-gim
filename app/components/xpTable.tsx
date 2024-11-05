@@ -72,7 +72,9 @@ const XpTable: React.FC<XpTableI> = ({ playerData }) => {
               <Button
                 size={'icon'}
                 variant={'ghost'}
-                onClick={() => updatePlayerData(playerData)}
+                onClick={() => {
+                  updatePlayerData(playerData);
+                }}
                 aria-label={`Refresh ${playerData.name}'s data`}
               >
                 <RefreshCw />
