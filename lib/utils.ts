@@ -1,8 +1,8 @@
 import type { PlayerDataI } from '@/types/playerData';
-import type { MonthlyXpGainI } from '@/types/xpData';
+import type { MonthlyXpGainI, MonthlyXpI } from '@/types/xpData';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { MAX_AGE } from './const';
+import { MAX_AGE, MAX_AGE_MONTH } from './const';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -18,12 +18,10 @@ export const isPlayerOutOfDate = (playerData: PlayerDataI): boolean => {
   return timeDifference > MAX_AGE;
 };
 
-export const isSkillOutOfDate = (
-  existingSkillData: MonthlyXpGainI
-): boolean => {
+export const isSkillXpOutOfDate = (existingSkillData: MonthlyXpI): boolean => {
   const timeDifference =
     Date.now() - new Date(existingSkillData.timestamp).getTime();
-  return timeDifference > MAX_AGE;
+  return timeDifference > MAX_AGE_MONTH;
 };
 
 export interface FormattedChartDataI {

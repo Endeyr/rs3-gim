@@ -33,6 +33,7 @@ export type MonthlyExperience = {
   monthlyXpGain: MonthlyExperienceGain[];
   loggedIn: string;
   name?: string;
+  timestamp?: Date;
 };
 
 export type MonthlyExperienceGain = {
@@ -41,7 +42,6 @@ export type MonthlyExperienceGain = {
   skillId: number;
   totalGain: number;
   totalXp: number;
-  timestamp?: Date;
   skillName?: string;
 };
 

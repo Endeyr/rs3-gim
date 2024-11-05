@@ -9,7 +9,6 @@ export interface MonthlyXpGainI {
   monthData: MonthDataI[];
   skillId: number;
   skillName: string;
-  timestamp: string;
   totalGain: number;
   totalXp: number;
 }
@@ -18,4 +17,5 @@ export interface MonthlyXpI {
   monthlyXpGain: MonthlyXpGainI[];
   loggedIn: 'false' | 'true';
   name: string;
+  timestamp: Date;
 }

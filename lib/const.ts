@@ -30,6 +30,8 @@ export const MONTH_NAMES = [
 
 export const MAX_AGE = 60 * 60 * 1000; // 1 hour
 
+export const MAX_AGE_MONTH = 30 * 24 * 60 * 60 * 1000; // 30 Days
+
 export const runemetrics = {
   endpoints: {
     profile: `https://apps.runescape.com/runemetrics/profile/profile`,

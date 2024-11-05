@@ -74,9 +74,9 @@ export const getMonthlyXpData = async (
       throw new Error('API response data is invalid or undefined');
     }
     data.name = name;
+    data.timestamp = new Date();
     data.monthlyXpGain.forEach((xpGain: MonthlyExperienceGain) => {
       const skillName = skillsMap.get(String(xpGain.skillId));
-      xpGain.timestamp = new Date();
       xpGain.skillName = skillName || 'unknown';
       if (xpGain.monthData.length === 0) {
         for (let i = 0; i < 13; i++) {
