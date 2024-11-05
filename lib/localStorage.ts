@@ -1,6 +1,10 @@
-export const setItem = (key: string, value: unknown) => {
+import { compress, decompress, trimUndefinedRecursively } from 'compress-json';
+
+export const setItem = (key: string, value: object) => {
   try {
-    localStorage.setItem(key, JSON.stringify(value));
+    trimUndefinedRecursively(value);
+    const item = compress(value);
+    localStorage.setItem(key, JSON.stringify(item));
   } catch (error) {
     console.error(error);
   }
@@ -10,7 +14,7 @@ export const setItem = (key: string, value: unknown) => {
 export const getItem = (key: string) => {
   try {
     const item = localStorage.getItem(key);
-    return item ? JSON.parse(item) : undefined;
+    return item ? decompress(JSON.parse(item)) : undefined;
   } catch (error) {
     console.error(error);
   }
