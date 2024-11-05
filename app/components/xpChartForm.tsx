@@ -17,7 +17,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { runemetrics } from '@/lib/const';
-import { isSkillOutOfDate } from '@/lib/utils';
 import { xpChartFormSchema } from '@/schemas/xpChartFormSchema';
 import { PlayerContextI } from '@/types/context';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -39,7 +38,6 @@ const XpChartForm = ({ username }: XpChartFormPropsI) => {
     isError,
     message,
     isSuccess,
-    monthlyXpDataArray,
     updateMonthlyXpData,
   } = useContext(PlayerContext) as PlayerContextI;
 
@@ -53,49 +51,33 @@ const XpChartForm = ({ username }: XpChartFormPropsI) => {
   const onSubmit = async (values: z.infer<typeof xpChartFormSchema>) => {
     updateIsLoading(true);
     setStatus('', 'reset');
-    const existingPlayerXpData = monthlyXpDataArray.find(
-      (player) => player.name === username
-    );
-    const existingSkillData = existingPlayerXpData?.monthlyXpGain.find(
-      (skill) => skill.skillName === values.skillName
-    );
-
-    // TODO add timestamp check before updating data
-    const isOutOfDate =
-      !existingSkillData || isSkillOutOfDate(existingSkillData);
-
-    if (isOutOfDate) {
-      try {
-        const monthlyXpResponse = await axios(
-          `/api/runemetrics/getMonthlyXp?name=${encodeURIComponent(
-            username
-          )}&skillId=${encodeURIComponent(values.skillName)}`
+    try {
+      const monthlyXpResponse = await axios(
+        `/api/runemetrics/getMonthlyXp?name=${encodeURIComponent(
+          username
+        )}&skillId=${encodeURIComponent(values.skillName)}`
+      );
+      const data = monthlyXpResponse.data;
+      updateMonthlyXpData(data);
+      setStatus('Player Skill data updated successfully.', 'success');
+      form.reset();
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log(error);
+        setStatus(
+          error.response?.status === 500
+            ? 'Player not found.'
+            : error.response
+              ? error.response.data.error
+              : 'An error occurred',
+          'error'
         );
-        const data = monthlyXpResponse.data;
-        updateMonthlyXpData(data);
-        setStatus('Player Skill data updated successfully.', 'success');
-        form.reset();
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          console.log(error);
-          setStatus(
-            error.response?.status === 500
-              ? 'Player not found.'
-              : error.response
-                ? error.response.data.error
-                : 'An error occurred',
-            'error'
-          );
-        } else {
-          setStatus(`An unexpected error occurred; ${error}`, 'error');
-          console.error(`Unexpected error: ${error}`);
-        }
-      } finally {
-        updateIsLoading(false);
+      } else {
+        setStatus(`An unexpected error occurred; ${error}`, 'error');
+        console.error(`Unexpected error: ${error}`);
       }
-    } else {
+    } finally {
       updateIsLoading(false);
-      setStatus('Player data is up to date.', 'error');
     }
   };
 

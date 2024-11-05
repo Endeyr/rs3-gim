@@ -107,66 +107,64 @@ const SearchBarForm: React.FC = () => {
   }, [setStatus]);
 
   return (
-    <div className='mx-auto w-full px-2'>
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className='flex w-full flex-col items-center justify-evenly space-y-4'
-          aria-busy={isLoading}
-          aria-live='polite'
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className='mx-auto flex w-full flex-col items-center justify-evenly space-y-4'
+        aria-busy={isLoading}
+        aria-live='polite'
+      >
+        <fieldset
+          disabled={isLoading}
+          className='w-full space-y-4'
+          aria-labelledby='search-form-legend'
         >
-          <fieldset
-            disabled={isLoading}
-            className='w-full space-y-4'
-            aria-labelledby='search-form-legend'
-          >
-            <legend id='search-options' className='sr-only'>
-              Search Options
-            </legend>
-            <FormField
-              control={form.control}
-              name='name'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Username</FormLabel>
-                  <FormControl>
-                    <Input
-                      data-testid='form-input-username'
-                      placeholder='Runescape Username'
-                      {...field}
-                      disabled={isLoading}
-                      aria-describedby='username-description username-error'
-                      aria-invalid={!!form.formState.errors.name}
-                    />
-                  </FormControl>
+          <legend id='search-options' className='sr-only'>
+            Search Options
+          </legend>
+          <FormField
+            control={form.control}
+            name='name'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Username</FormLabel>
+                <FormControl>
+                  <Input
+                    data-testid='form-input-username'
+                    placeholder='Runescape Username'
+                    {...field}
+                    disabled={isLoading}
+                    aria-describedby='username-description username-error'
+                    aria-invalid={!!form.formState.errors.name}
+                  />
+                </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </fieldset>
-          <div className='w-full'>
-            <Button
-              className='h-12 w-full'
-              data-testid='form-submit-btn'
-              type='submit'
-              disabled={isLoading}
-            >
-              {!isLoading ? (
-                'Add'
-              ) : (
-                <Spinner
-                  className='dark:text-color-black text-color-white'
-                  size={'small'}
-                >
-                  Loading...
-                </Spinner>
-              )}
-            </Button>
-          </div>
-        </form>
-      </Form>
-    </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </fieldset>
+        <div className='w-full'>
+          <Button
+            className='h-12 w-full'
+            data-testid='form-submit-btn'
+            type='submit'
+            disabled={isLoading}
+          >
+            {!isLoading ? (
+              'Add'
+            ) : (
+              <Spinner
+                className='dark:text-color-black text-color-white'
+                size={'small'}
+              >
+                Loading...
+              </Spinner>
+            )}
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 };
 export default SearchBarForm;
