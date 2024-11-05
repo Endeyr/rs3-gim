@@ -4,12 +4,13 @@ import Container from '@/components/layout/container';
 import { PlayerContextI } from '@/types/context';
 import { PlayerDataI } from '@/types/playerData';
 import { useContext, useEffect } from 'react';
+import MessageStatus from '../components/messageStatus';
 import SearchBar from '../components/searchBar';
 import XpTable from '../components/xpTable';
 import { PlayerContext } from '../context/playerContext';
 
 const Dashboard = () => {
-  const { playerDataArray, updatePlayerDataArray } = useContext(
+  const { playerDataArray, updatePlayerDataArray, message } = useContext(
     PlayerContext
   ) as PlayerContextI;
 
@@ -41,7 +42,8 @@ const Dashboard = () => {
             : 'md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1';
 
   return (
-    <Container>
+    <Container className='flex flex-col'>
+      {message && <MessageStatus />}
       <ul className={`grid grid-cols-1 gap-4 ${dynamicClasses}`}>
         {playerDataArray.length === 0 ? (
           <li>No players found. Please add some players.</li>
