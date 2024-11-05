@@ -31,9 +31,6 @@ const SearchBarForm: React.FC = () => {
     updateIsLoading,
     setStatus,
     isLoading,
-    isError,
-    message,
-    isSuccess,
     updateMonthlyXpData,
   } = useContext(PlayerContext) as PlayerContextI;
 
@@ -65,8 +62,8 @@ const SearchBarForm: React.FC = () => {
 
     if (isOutOfDate) {
       try {
-        await fetchProfileAndQuests(values.name, signal, updatePlayerData);
         await fetchSkillXp(values.name, signal, updateMonthlyXpData);
+        await fetchProfileAndQuests(values.name, signal, updatePlayerData);
         setStatus('Player data updated successfully.', 'success');
         form.reset();
       } catch (error) {
@@ -150,7 +147,7 @@ const SearchBarForm: React.FC = () => {
           </fieldset>
           <div className='w-full'>
             <Button
-              className='h-12 w-full md:w-1/2'
+              className='h-12 w-full'
               data-testid='form-submit-btn'
               type='submit'
               disabled={isLoading}
@@ -169,23 +166,6 @@ const SearchBarForm: React.FC = () => {
           </div>
         </form>
       </Form>
-      {message && (
-        <p
-          data-testid='status-message'
-          className={`mt-2 w-full break-words ${
-            isError
-              ? 'text-red-500'
-              : isSuccess
-                ? 'text-green-500'
-                : 'text-primary'
-          }`}
-          role={isError ? 'alert' : isSuccess ? 'status' : 'info'}
-          aria-live='polite'
-          aria-atomic='true'
-        >
-          {message}
-        </p>
-      )}
     </div>
   );
 };
