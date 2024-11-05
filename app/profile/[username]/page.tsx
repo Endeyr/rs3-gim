@@ -5,10 +5,13 @@ import XpChartCheckbox from '@/app/components/xpChartCheckbox';
 import XpTable from '@/app/components/xpTable';
 import { PlayerContext } from '@/app/context/playerContext';
 import Container from '@/components/layout/container';
+import { Button } from '@/components/ui/button';
 import type { ChartConfig } from '@/components/ui/chart';
 import { fetchSkillXp } from '@/lib/api/fetchSkillXp';
 import { CHART_COLORS } from '@/lib/const';
 import type { PlayerContextI } from '@/types/context';
+import { EyeClosedIcon } from '@radix-ui/react-icons';
+import { Eye } from 'lucide-react';
 import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 interface ProfilePagePropsI {
@@ -17,6 +20,7 @@ interface ProfilePagePropsI {
 
 const ProfilePage = ({ params }: ProfilePagePropsI) => {
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+  const [isXpTableShown, setIsXpTableShown] = useState(true);
 
   const { username } = params;
   const { playerDataArray, monthlyXpDataArray, updateMonthlyXpData } =
@@ -97,16 +101,30 @@ const ProfilePage = ({ params }: ProfilePagePropsI) => {
       };
     }, [playerDataArray, monthlyXpDataArray, username, selectedSkills]);
 
+  const chartSize = isXpTableShown ? 'lg:col-span-2' : 'lg:col-span-3';
+
   return (
-    <Container className='grid grid-cols-1 space-x-2 xl:grid-cols-3'>
+    <Container className='grid min-h-[100dvh] grid-cols-1 space-x-2 xl:grid-cols-3'>
       {userData && (
         <>
-          <div className='col-span-1 w-full px-2'>
-            <XpTable playerData={userData} />
-          </div>
-          <div className='col-span-1 h-full w-[98%] items-start justify-center space-x-2 space-y-4 px-2 lg:col-span-2'>
-            <div className='mx-2 flex w-full justify-start'>
-              <XpChartCheckbox setSelectedSkills={setSelectedSkills} />
+          {isXpTableShown && (
+            <div className='col-span-1 w-full px-2'>
+              <XpTable playerData={userData} />
+            </div>
+          )}
+          <div
+            className={`col-span-1 min-h-full w-[98%] items-start justify-center space-x-2 space-y-4 px-2 ${chartSize}`}
+          >
+            <div className='flex w-full items-center justify-evenly gap-2'>
+              <Button
+                className='w-full md:w-1/6'
+                onClick={() => setIsXpTableShown(!isXpTableShown)}
+              >
+                {isXpTableShown ? <EyeClosedIcon /> : <Eye />}
+              </Button>
+              <div className='mx-2 flex w-full justify-end border border-red-500'>
+                <XpChartCheckbox setSelectedSkills={setSelectedSkills} />
+              </div>
             </div>
             {filteredXpData.length > 0 && (
               <XpChart
