@@ -23,7 +23,8 @@ const QuestsPage = ({ params }: QuestsPagePropsI) => {
   }, [playerDataArray, username]);
 
   return (
-    <Container className='flex-col'>
+    <Container className='flex-col space-y-6 md:space-y-6'>
+      <h2>{userData?.name}</h2>
       {userData?.quests ? (
         <QuestsList quests={userData.quests} />
       ) : (

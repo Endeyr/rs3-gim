@@ -90,8 +90,8 @@ const QuestsList = ({ quests }: QuestListPropsI) => {
   };
 
   return (
-    <div className='min-h-[100dvh] w-full'>
-      <div>Quests Shown {filteredQuests.length}</div>
+    <div className='min-h-[100dvh] w-full space-y-4'>
+      <div>Quests Shown: {filteredQuests.length}</div>
       <div className='flex items-center justify-evenly'>
         <Select onValueChange={(value: string) => handleToggleDirection(value)}>
           <SelectTrigger className='w-[180px]'>
@@ -141,7 +141,7 @@ const QuestsList = ({ quests }: QuestListPropsI) => {
           </SelectContent>
         </Select>
       </div>
-      <ul>
+      <ul className='space-y-2'>
         {filteredQuests.length > 0 &&
           filteredQuests.map((quest) => (
             <QuestCard key={quest.title} quest={quest} />
