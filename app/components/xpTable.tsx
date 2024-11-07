@@ -117,7 +117,11 @@ const XpTable: React.FC<XpTableI> = ({ playerData }) => {
             </TableRow>
           ))}
           <TableRow>
-            <TableCell>Quest Completed</TableCell>
+            <TableCell>
+              <Link href={`${encodeURIComponent(playerData.name)}/quests`}>
+                Quest Completed
+              </Link>
+            </TableCell>
             <TableCell></TableCell>
             <TableCell className='text-right'>
               {playerData.questscomplete}
